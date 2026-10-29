@@ -196,7 +196,7 @@ def run_scraper():
             print(f"  [+] Eklendi ({score/10:.1f}): {raw_title[:60]}...")
             
             # VIP Bildirimi (93 ve üzeri puan)
-            if int(score) >= 93:
+            if int(score) >= 85:
                 tr_headline = translations.get("TR", {}).get("headline", raw_title)
                 send_telegram_alert(score, cat, tr_headline, link)
                 
