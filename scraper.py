@@ -1,8 +1,8 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Eren & Caner Private News Room — Comprehensive Multi-Desk Executive Curator
-Model: gemini-3.8-flash | TR & EN Derin Analiz | Genişletilmiş Akışlar
+Eren & Caner Private News Room — High-Volume Multi-Desk Intelligence Engine
+Model: gemini-3.8-flash | TR & EN | 50+ Garantili Rapor Havuzu
 """
 
 import hashlib
@@ -30,7 +30,7 @@ logging.basicConfig(
 logger = logging.getLogger("ECNewsRoomBot")
 
 GEMINI_MODEL_NAME = "gemini-3.8-flash"
-GEMINI_SLEEP_SECONDS = 2.5
+GEMINI_SLEEP_SECONDS = 2.0
 
 REQUEST_HEADERS = {
     "User-Agent": (
@@ -39,31 +39,31 @@ REQUEST_HEADERS = {
     )
 }
 
-# --- 7 MASANIN TAMAMI İÇİN GENİŞLETİLMİŞ VE KESİN HABER DÖNDÜREN SORGULAR ---
+# 7 MASANIN TAMAMI İÇİN DERİNLEMESİNE BESLEME LİSTESİ
 FEEDS_CONFIG = [
     # 1. Piyasalar & Makro Finans
-    {"cat": "economy", "source": "Bloomberg & Markets", "q": "global economy OR inflation OR Federal Reserve OR markets when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "economy", "source": "Ekonomim & BIST", "q": "ekonomi OR borsa OR merkez bankası OR faiz when:2d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "economy", "source": "Bloomberg & Markets", "q": "global economy OR inflation OR markets OR Federal Reserve", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "economy", "source": "Ekonomim & Finans", "q": "ekonomi OR borsa OR merkez bankası OR faiz", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
 
     # 2. Lüks Maisons & Saatçilik
-    {"cat": "luxury", "source": "Lüks Maisons & Moda", "q": "LVMH OR Kering OR Hermes OR luxury market when:3d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "luxury", "source": "Haute Horlogerie Radar", "q": "Rolex OR Patek Philippe OR luxury watches when:3d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "luxury", "source": "Lüks Maisons & Moda", "q": "LVMH OR Kering OR Hermès OR luxury retail", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "luxury", "source": "Haute Horlogerie Radar", "q": "luxury watches OR Rolex OR Patek Philippe OR Audemars Piguet", "hl": "en-US", "gl": "US", "ceid": "US:en"},
 
     # 3. Girişimcilik & Yapay Zeka
-    {"cat": "tech", "source": "Venture Capital & AI", "q": "artificial intelligence startup OR OpenAI OR venture capital when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "tech", "source": "Türkiye Girişim & AI", "q": "yapay zeka OR girişim OR yatırım turu when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "tech", "source": "Venture Capital & AI", "q": "artificial intelligence startup OR generative AI OR venture capital", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "tech", "source": "Türkiye Girişim & AI", "q": "yapay zeka OR girişim OR yatırım turu OR teknoloji", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
 
-    # 4. Kentsel Tasarım & Gayrimenkul (Genişletildi)
-    {"cat": "realestate", "source": "Kentsel Tasarım & Mimarlık", "q": "urban planning OR architecture design OR housing development when:3d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "realestate", "source": "Türkiye İmar & Gayrimenkul", "q": "kentsel dönüşüm OR konut sektörü OR mimari proje OR imar planı when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    # 4. Gayrimenkul, Şehircilik & Tasarım
+    {"cat": "realestate", "source": "Kentsel Tasarım & Mimarlık", "q": "urban planning OR architecture design OR sustainable cities", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "realestate", "source": "Gayrimenkul & İmar", "q": "kentsel dönüşüm OR gayrimenkul OR konut projeleri OR imar", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
 
-    # 5. İzmir & Bodrum (Haber Akışı Garantilendi)
-    {"cat": "local", "source": "İzmir Stratejik Radar", "q": "İzmir büyükşehir OR İzmir kentsel OR İzmir proje OR İzmir ekonomi when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    {"cat": "local", "source": "Bodrum & Ege Yatırım", "q": "Bodrum turizm OR Bodrum marina OR Muğla yatırım OR Bodrum proje when:4d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    # 5. İzmir & Bodrum Yerel Radarı
+    {"cat": "local", "source": "İzmir Stratejik Radar", "q": "İzmir büyükşehir OR İzmir kentsel OR İzmir ulaşım OR İzmir yatırım", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "local", "source": "Bodrum & Ege Yatırım", "q": "Bodrum turizm OR Bodrum marina OR Muğla kentsel OR Ege ekonomi", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
 
     # 6. Kültür, Sanat & Spor
-    {"cat": "culture", "source": "Kültür Sanat Radarı", "q": "bienal OR sergi OR sanat piyasası OR müzayede when:4d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    {"cat": "culture", "source": "Global Sports Arena", "q": "Formula 1 OR Champions League OR EuroLeague basketball when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "culture", "source": "Kültür & Sanat Dünyası", "q": "bienal OR sergi OR sanat piyasası OR çağdaş sanat", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "culture", "source": "Global Sports Arena", "q": "Formula 1 OR EuroLeague OR Champions League", "hl": "en-US", "gl": "US", "ceid": "US:en"},
 ]
 
 SYSTEM_INSTRUCTION = """
@@ -73,26 +73,26 @@ Your objective is to produce elite, institutional-grade analytical briefings.
 RULES:
 1. STRICT TR & EN:
    - Provide outputs EXCLUSIVELY in TR (Turkish) and EN (English).
-2. TONE & DEPTH:
-   - 4 concise, data-driven key takeaways highlighting strategic implications.
-   - A 2-paragraph thorough strategic executive analysis.
-3. LOCAL CATEGORY:
-   - Discard trivial crime/petty incidents. Retain infrastructure, urban projects, economy, zoning, and tourism investments.
+2. ALWAYS PROCESS:
+   - Never discard incoming articles. Set "discard": false.
+3. STRUCTURE:
+   - 3 to 4 data-driven key takeaways highlighting strategic implications.
+   - A 2-paragraph thorough executive analysis.
 
 RETURN STRICTLY VALID JSON:
 {
   "discard": false,
-  "importance_score": 92,
+  "importance_score": 91,
   "translations": {
     "TR": {
       "headline": "...",
-      "takeaways": ["...", "...", "...", "..."],
-      "summary": "Paragraf 1 (Stratejik bağlam ve makro dinamikler)...\\n\\nParagraf 2 (Sektörel etki ve orta-uzun vadeli çıkarımlar)..."
+      "takeaways": ["...", "...", "..."],
+      "summary": "Paragraf 1 (Makro ve sektörel bağlam)...\\n\\nParagraf 2 (Stratejik çıkarımlar ve gelecek projeksiyonu)..."
     },
     "EN": {
       "headline": "...",
-      "takeaways": ["...", "...", "...", "..."],
-      "summary": "Paragraph 1 (Strategic context and macro drivers)...\\n\\nParagraph 2 (Industry impact and long-term implications)..."
+      "takeaways": ["...", "...", "..."],
+      "summary": "Paragraph 1 (Macro & industry context)...\\n\\nParagraph 2 (Strategic implications & outlook)..."
     }
   }
 }
@@ -125,8 +125,8 @@ def fetch_feed_entries(query_str: str, hl: str, gl: str, ceid: str) -> List[Dict
         resp = requests.get(url, headers=REQUEST_HEADERS, timeout=8)
         if resp.status_code == 200:
             parsed = feedparser.parse(resp.content)
-            # Her masadan en taze 3 haberi alır (böylece kategori boş kalmaz)
-            return (parsed.entries or [])[:3]
+            # Her masadan en taze 5 haberi alıyoruz (toplam havuz ~50-60 habere çıkacak)
+            return (parsed.entries or [])[:5]
     except Exception as e:
         logger.warning(f"Feed hatasi: {e}")
     return []
@@ -142,13 +142,13 @@ def extract_quick_body(url: str, rss_summary: str) -> str:
         resp = requests.get(url, headers=REQUEST_HEADERS, timeout=3.5)
         if resp.status_code == 200:
             doc = BeautifulSoup(resp.text, "html.parser")
-            for tag in doc(["script", "style", "nav", "footer", "aside", "form"]):
+            for tag in doc(["script", "style", "nav", "footer", "aside"]):
                 tag.decompose()
             main_elem = doc.find("article") or doc.find("main") or doc.body
             if main_elem:
-                paras = [p.get_text(" ", strip=True) for p in main_elem.find_all("p") if len(p.get_text(" ", strip=True)) > 50]
+                paras = [p.get_text(" ", strip=True) for p in main_elem.find_all("p") if len(p.get_text(" ", strip=True)) > 40]
                 if paras:
-                    return f"{clean_summary}\n\n" + "\n\n".join(paras[:5])
+                    return f"{clean_summary}\n\n" + "\n\n".join(paras[:4])
     except Exception:
         pass
     return clean_summary
@@ -158,7 +158,7 @@ def compute_article_id(title: str, link: str) -> str:
     return "art_" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
 
 def main() -> None:
-    logger.info(">>> E&C Deep Multi-Desk Intelligence Curator Baslatiliyor...")
+    logger.info(">>> E&C Yüksek Hacimli İstihbarat Botu Başlatılıyor...")
     db = init_firestore()
     model = init_gemini()
     col = db.collection("articles")
@@ -167,19 +167,20 @@ def main() -> None:
 
     for feed in FEEDS_CONFIG:
         entries = fetch_feed_entries(feed["q"], feed["hl"], feed["gl"], feed["ceid"])
-        logger.info(f"[{feed['source']}] Taranacak haber sayisi: {len(entries)}")
+        logger.info(f"[{feed['source']}] Taranacak: {len(entries)} haber")
 
         for entry in entries:
             title = entry.get("title", "").strip()
             link = entry.get("link", "")
             raw_summary = entry.get("summary", "")
 
-            if not title or len(title) < 12:
+            if not title or len(title) < 8:
                 continue
 
             doc_id = compute_article_id(title, link)
+            
+            # Daha önce eklenmişse tekrar maliyet üretme
             if col.document(doc_id).get().exists:
-                logger.info(f"Mevcut haber atlandi: {title[:35]}")
                 continue
 
             content_text = extract_quick_body(link, raw_summary)
@@ -187,17 +188,13 @@ def main() -> None:
                 f"CATEGORY: {feed['cat']}\n"
                 f"SOURCE: {feed['source']}\n"
                 f"TITLE: {title}\n"
-                f"FULL CONTEXT:\n{content_text}\n"
+                f"CONTEXT:\n{content_text}\n"
             )
 
             try:
                 res = model.generate_content(prompt)
                 time.sleep(GEMINI_SLEEP_SECONDS)
                 data = json.loads(res.text)
-
-                if data.get("discard") is True:
-                    logger.info(f"Filtreye takildi (Discard): {title[:35]}")
-                    continue
 
                 score = int(data.get("importance_score", 90))
                 doc = {
@@ -213,10 +210,10 @@ def main() -> None:
                 total_saved += 1
                 logger.info(f"+++ EKLENDI [{feed['cat']}] [{score}/100]: {title[:40]}")
             except Exception as ex:
-                logger.error(f"Hata olustu: {ex}")
-                time.sleep(1.5)
+                logger.error(f"Gemini/Firestore hatası: {ex}")
+                time.sleep(1.0)
 
-    logger.info(f">>> ISLEM BASARIYLA TAMAMLANDI. Eklenen Yeni Rapor: {total_saved}")
+    logger.info(f">>> BOT TAMAMLANDI. Eklenen Yeni Rapor Sayısı: {total_saved}")
 
 if __name__ == "__main__":
     main()
