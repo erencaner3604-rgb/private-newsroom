@@ -207,5 +207,4 @@ def run_scraper():
     print(f"==========================================")
 
 if __name__ == "__main__":
-    send_telegram_alert(99, "TEST", "Sistem basariyla Telegram'a baglandi! 🚀", "https://google.com")
     run_scraper()
