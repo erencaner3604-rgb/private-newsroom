@@ -3,7 +3,7 @@ name: Autonomous Executive News Room Bot
 on:
   schedule:
     # TSİ 10:00 (UTC 07:00), TSİ 16:00 (UTC 13:00) ve TSİ 22:00 (UTC 19:00)
-    - cron: '0 7,13,19 * * *'
+    - cron: '0 10,16,22 * * *'
   workflow_dispatch:
 
 jobs:
