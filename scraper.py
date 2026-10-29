@@ -197,7 +197,9 @@ def extract_article_body(url: str, rss_summary: str) -> str:
             junk.decompose()
         container = soup.find("article") or soup.find("main") or soup.body or soup
         paragraphs = [p.get_text(" ", strip=True) for p in container.find_all("p") if len(p.get_text(" ", strip=True)) > 45]
-        return f"{base_summary}\n\n{'\n'.join(paragraphs[:15])}"[:7000].strip()
+        joined_paragraphs = "\n".join(paragraphs[:15])
+        combined = base_summary + "\n\n" + joined_paragraphs
+        return combined[:7000].strip()
     except Exception:
         return base_summary[:4000]
 
