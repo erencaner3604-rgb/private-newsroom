@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 """
 Eren & Caner Private News Room — Hibrit İstihbarat Motoru
-Gemini 3.8 Flash (Birincil) + Groq Mixtral (Yedek)
+Gemini 3.8 Flash (Birincil) + Groq GPT-OSS-120B (Yedek)
 """
 
 import hashlib
@@ -32,7 +32,7 @@ logger = logging.getLogger("ECHybridBot")
 
 # MODEL TANIMLARI
 GEMINI_MODEL_NAME = "gemini-3.8-flash"
-GROQ_MODEL = "mixtral-8x7b-32768"
+GROQ_MODEL = "openai/gpt-oss-120b"
 
 REQUEST_HEADERS = {
     "User-Agent": (
@@ -140,9 +140,9 @@ def analyze_article(gemini_model, groq_client: Groq, prompt_text: str) -> Dict[s
             res = gemini_model.generate_content(prompt_text)
             return json.loads(res.text)
         except Exception as e:
-            logger.warning(f"Gemini yanıt veremedi / kota bitti: {e}. Groq Mixtral devreye giriyor...")
+            logger.warning(f"Gemini yanıt veremedi / kota bitti: {e}. Groq devreye giriyor...")
 
-    # 2. Gemini kotaya takılırsa Groq Mixtral devreye girer
+    # 2. Gemini kotaya takıldığında Groq (openai/gpt-oss-120b) devreye girer
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
@@ -161,7 +161,7 @@ def analyze_article(gemini_model, groq_client: Groq, prompt_text: str) -> Dict[s
     return {}
 
 def main() -> None:
-    logger.info(">>> E&C Hibrit (Gemini 3.8 Flash + Groq Mixtral) Botu Başlatılıyor...")
+    logger.info(">>> E&C Hibrit (Gemini 3.8 Flash + Groq GPT-OSS) Botu Başlatılıyor...")
     db = init_firestore()
     col = db.collection("articles")
 
