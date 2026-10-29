@@ -2,9 +2,10 @@ import os
 import json
 import time
 import hashlib
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 import urllib.parse
 import feedparser
+import requests
 from bs4 import BeautifulSoup
 import firebase_admin
 from firebase_admin import credentials, firestore
@@ -17,6 +18,8 @@ from groq import Groq
 FIREBASE_SA = os.environ.get("FIREBASE_SERVICE_ACCOUNT", "").strip()
 GEMINI_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 GROQ_KEY = os.environ.get("GROQ_API_KEY", "").strip()
+TELEGRAM_TOKEN = os.environ.get("TELEGRAM_BOT_TOKEN", "").strip()
+TELEGRAM_CHAT_ID = os.environ.get("TELEGRAM_CHAT_ID", "").strip()
 
 if not FIREBASE_SA:
     raise ValueError("HATA: FIREBASE_SERVICE_ACCOUNT secret tanımlanmamış.")
@@ -37,79 +40,16 @@ groq_client = Groq(api_key=GROQ_KEY) if GROQ_KEY else None
 # 2. RSS VE KATEGORİ HARİTASI
 # ---------------------------------------------------------
 FEEDS_CONFIG = [
-    # 1. KÜRESEL MANŞETLER (Global Reuters / BBC)
-    {
-        "cat": "breaking_world",
-        "source": "Reuters & Global Breaking",
-        "q": "geopolitics OR diplomacy OR White House OR NATO OR United Nations",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-
-    # 2. EKONOMİ & FİNANS
-    {
-        "cat": "economy_finance",
-        "source": "Global Macro & Fed",
-        "q": "Federal Reserve OR interest rates OR ECB OR inflation OR Wall Street",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-    {
-        "cat": "economy_finance",
-        "source": "TCMB & Borsa İstanbul",
-        "q": "TCMB OR faiz kararı OR Borsa İstanbul OR enflasyon",
-        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
-    },
-
-    # 3. LÜKS & SAATÇİLİK
-    {
-        "cat": "luxury_horology",
-        "source": "LVMH & Luxury Maisons",
-        "q": "LVMH OR Kering OR Richemont OR Hermes OR Brunello Cucinelli",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-    {
-        "cat": "luxury_horology",
-        "source": "Haute Horlogerie & Watchmaking",
-        "q": "Rolex OR Patek Philippe OR Audemars Piguet OR Vacheron Constantin OR Watches and Wonders",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-
-    # 4. GAYRİMENKUL
-    {
-        "cat": "real_estate_market",
-        "source": "Real Estate & REITs",
-        "q": "commercial real estate OR housing market OR REIT OR gayrimenkul konut",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-
-    # 5. YAPAY ZEKA & VC
-    {
-        "cat": "ai_vc_tech",
-        "source": "AI Breakthroughs & Tech",
-        "q": "artificial intelligence OR OpenAI OR Anthropic OR Nvidia AI OR venture capital",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-
-    # 6. DIŞ TİCARET & LOJİSTİK
-    {
-        "cat": "trade_logistics",
-        "source": "Global Logistics & Shipping",
-        "q": "container shipping OR freight rates OR supply chain OR ihracat dış ticaret",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-
-    # 7. İZMİR & BODRUM RADARI
-    {
-        "cat": "aegean_radar",
-        "source": "İzmir Ticaret & Liman",
-        "q": "İzmir Alsancak Limanı OR EBSO OR İZTO OR İzmir ekonomi",
-        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
-    },
-    {
-        "cat": "aegean_radar",
-        "source": "Bodrum Turizm & Marina",
-        "q": "Bodrum Yalıkavak Marina OR Bodrum turizm yatırımı OR Bodrum gayrimenkul",
-        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
-    },
+    {"cat": "breaking_world", "source": "Reuters & Global Breaking", "q": "geopolitics OR diplomacy OR White House OR NATO OR United Nations", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "economy_finance", "source": "Global Macro & Fed", "q": "Federal Reserve OR interest rates OR ECB OR inflation OR Wall Street", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "economy_finance", "source": "TCMB & Borsa İstanbul", "q": "TCMB OR faiz kararı OR Borsa İstanbul OR enflasyon", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "luxury_horology", "source": "LVMH & Luxury Maisons", "q": "LVMH OR Kering OR Richemont OR Hermes OR Brunello Cucinelli", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "luxury_horology", "source": "Haute Horlogerie & Watchmaking", "q": "Rolex OR Patek Philippe OR Audemars Piguet OR Vacheron Constantin OR Watches and Wonders", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "real_estate_market", "source": "Real Estate & REITs", "q": "commercial real estate OR housing market OR REIT OR gayrimenkul konut", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "ai_vc_tech", "source": "AI Breakthroughs & Tech", "q": "artificial intelligence OR OpenAI OR Anthropic OR Nvidia AI OR venture capital", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "trade_logistics", "source": "Global Logistics & Shipping", "q": "container shipping OR freight rates OR supply chain OR ihracat dış ticaret", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "aegean_radar", "source": "İzmir Ticaret & Liman", "q": "İzmir Alsancak Limanı OR EBSO OR İZTO OR İzmir ekonomi", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "aegean_radar", "source": "Bodrum Turizm & Marina", "q": "Bodrum Yalıkavak Marina OR Bodrum turizm yatırımı OR Bodrum gayrimenkul", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
 ]
 
 # ---------------------------------------------------------
@@ -147,35 +87,35 @@ Return ONLY a raw JSON object with this exact schema:
 
 def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nSummary: {summary_raw}"
-
-    # 1. Öncelik: Gemini (Model: gemini-3.8-flash)
     if GEMINI_KEY:
         try:
             model = genai.GenerativeModel("gemini-3.8-flash")
-            response = model.generate_content(
-                f"{SYSTEM_PROMPT}\n\nAnalyze this:\n{content}",
-                generation_config={"response_mime_type": "application/json"}
-            )
+            response = model.generate_content(f"{SYSTEM_PROMPT}\n\nAnalyze this:\n{content}", generation_config={"response_mime_type": "application/json"})
             return json.loads(response.text.strip())
         except Exception as e:
             print(f"Gemini hatası, Groq'a geçiliyor: {e}")
 
-    # 2. Öncelik: Groq (Model: openai/gpt-oss-120b)
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
                 model="openai/gpt-oss-120b",
-                messages=[
-                    {"role": "system", "content": SYSTEM_PROMPT},
-                    {"role": "user", "content": content}
-                ],
+                messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": content}],
                 response_format={"type": "json_object"}
             )
             return json.loads(chat.choices[0].message.content.strip())
         except Exception as e:
             print(f"Groq hatası: {e}")
-
     return None
+
+def send_telegram_alert(score, cat, headline, url):
+    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID: return
+    emoji = "🚨" if score >= 96 else "⚡"
+    msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Brifingi Oku & Detaylar]({url})"
+    api_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
+    try:
+        requests.post(api_url, json={"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": "Markdown"})
+    except Exception as e:
+        print(f"Telegram gönderim hatası: {e}")
 
 # ---------------------------------------------------------
 # 4. TARAMA VE VERİTABANI MOTORU
@@ -183,8 +123,24 @@ def analyze_with_ai(title, summary_raw):
 def run_scraper():
     print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
     articles_col = db.collection("articles")
-    added_count = 0
+    
+    # 1. ÖZELLİK: 3 GÜNDEN ESKİ HABERLERİ SİLME (Veritabanı Şişmesini Önler)
+    print(">>> 3 GÜNDEN ESKİ HABERLER TEMİZLENİYOR...")
+    three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
+    docs = articles_col.stream()
+    del_count = 0
+    for d in docs:
+        data = d.to_dict()
+        pub_str = data.get("published_at")
+        if pub_str:
+            try:
+                if datetime.fromisoformat(pub_str) < three_days_ago:
+                    d.reference.delete()
+                    del_count += 1
+            except: pass
+    print(f">>> {del_count} ESKİ HABER SİLİNDİ.")
 
+    added_count = 0
     for feed_info in FEEDS_CONFIG:
         cat = feed_info["cat"]
         source_name = feed_info["source"]
@@ -199,17 +155,19 @@ def run_scraper():
         for entry in entries[:3]:
             raw_title = entry.title
             link = entry.link
-            
             doc_id = hashlib.md5((raw_title + cat).encode("utf-8")).hexdigest()
 
             if articles_col.document(doc_id).get().exists:
                 continue
 
-            clean_summary = BeautifulSoup(getattr(entry, 'summary', ''), "html.parser").get_text()
+            # 2. ÖZELLİK: GÖRSEL (THUMBNAIL) ÇEKME
+            soup = BeautifulSoup(getattr(entry, 'summary', ''), "html.parser")
+            clean_summary = soup.get_text()
+            img_tag = soup.find('img')
+            image_url = img_tag['src'] if img_tag and img_tag.has_attr('src') else ""
 
             ai_data = analyze_with_ai(raw_title, clean_summary)
-            if not ai_data:
-                continue
+            if not ai_data: continue
 
             score = ai_data.get("importance_score", 85)
             translations = ai_data.get("translations", {})
@@ -219,6 +177,7 @@ def run_scraper():
                 "source": source_name,
                 "original_title": raw_title,
                 "link": link,
+                "image_url": image_url,
                 "importance_score": int(score),
                 "translations": translations,
                 "published_at": datetime.now(timezone.utc).isoformat()
@@ -227,6 +186,12 @@ def run_scraper():
             articles_col.document(doc_id).set(doc_payload)
             added_count += 1
             print(f"  [+] Eklendi ({score/10:.1f}): {raw_title[:60]}...")
+            
+            # 3. ÖZELLİK: TELEGRAM ALARMI (93 VE ÜZERİ PUANLAR İÇİN)
+            if int(score) >= 93:
+                tr_headline = translations.get("TR", {}).get("headline", raw_title)
+                send_telegram_alert(score, cat, tr_headline, link)
+                
             time.sleep(1)
 
     print(f"\n==========================================")
