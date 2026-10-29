@@ -34,7 +34,7 @@ if GEMINI_KEY:
 groq_client = Groq(api_key=GROQ_KEY) if GROQ_KEY else None
 
 # ---------------------------------------------------------
-# 2. GARANTİ ÇALIŞAN RSS VE KATEGORİ HARİTASI
+# 2. RSS VE KATEGORİ HARİTASI
 # ---------------------------------------------------------
 FEEDS_CONFIG = [
     # 1. KÜRESEL MANŞETLER (Global Reuters / BBC)
@@ -113,7 +113,7 @@ FEEDS_CONFIG = [
 ]
 
 # ---------------------------------------------------------
-# 3. AI ANALİZİ
+# 3. KÜRASYON İSTEMİ (PROMPT)
 # ---------------------------------------------------------
 SYSTEM_PROMPT = """
 You are the Chief Intelligence Analyst for the "Private News Room" (Executive Intelligence Platform).
@@ -148,21 +148,23 @@ Return ONLY a raw JSON object with this exact schema:
 def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nSummary: {summary_raw}"
 
+    # 1. Öncelik: Gemini (Model: gemini-3.8-flash)
     if GEMINI_KEY:
         try:
-            model = genai.GenerativeModel("gemini-2.5-flash")
+            model = genai.GenerativeModel("gemini-3.8-flash")
             response = model.generate_content(
                 f"{SYSTEM_PROMPT}\n\nAnalyze this:\n{content}",
                 generation_config={"response_mime_type": "application/json"}
             )
             return json.loads(response.text.strip())
         except Exception as e:
-            print(f"Gemini hatası: {e}")
+            print(f"Gemini hatası, Groq'a geçiliyor: {e}")
 
+    # 2. Öncelik: Groq (Model: openai/gpt-oss-120b)
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="openai/gpt-oss-120b",
                 messages=[
                     {"role": "system", "content": SYSTEM_PROMPT},
                     {"role": "user", "content": content}
@@ -176,10 +178,10 @@ def analyze_with_ai(title, summary_raw):
     return None
 
 # ---------------------------------------------------------
-# 4. VERİTABANI MOTORU
+# 4. TARAMA VE VERİTABANI MOTORU
 # ---------------------------------------------------------
 def run_scraper():
-    print(">>> PRIVATE NEWS ROOM: HABER MOTORU BAŞLATILDI...")
+    print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
     articles_col = db.collection("articles")
     added_count = 0
 
@@ -194,13 +196,12 @@ def run_scraper():
         entries = parsed.entries or []
         print(f"\n--- [{cat}] {source_name}: {len(entries)} haber bulundu ---")
 
-        for entry in entries[:3]:  # Her alt başlıktan en yeni 3 haberi al
+        for entry in entries[:3]:
             raw_title = entry.title
             link = entry.link
             
             doc_id = hashlib.md5((raw_title + cat).encode("utf-8")).hexdigest()
 
-            # Zaten varsa atla (mükerrer kayıt engelleme)
             if articles_col.document(doc_id).get().exists:
                 continue
 
@@ -229,7 +230,7 @@ def run_scraper():
             time.sleep(1)
 
     print(f"\n==========================================")
-    print(f">>> BİTTİ! Eklenen Yeni Haber: {added_count}")
+    print(f">>> İŞLEM TAMAMLANDI! Toplam Eklenen Yeni Rapor: {added_count}")
     print(f"==========================================")
 
 if __name__ == "__main__":
