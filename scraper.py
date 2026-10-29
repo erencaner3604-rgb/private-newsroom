@@ -34,21 +34,15 @@ if GEMINI_KEY:
 groq_client = Groq(api_key=GROQ_KEY) if GROQ_KEY else None
 
 # ---------------------------------------------------------
-# 2. TEMİZ VE GARANTİ ÇALIŞAN RSS SORGULARI
+# 2. GARANTİ ÇALIŞAN RSS VE KATEGORİ HARİTASI
 # ---------------------------------------------------------
 FEEDS_CONFIG = [
-    # 1. KÜRESEL MANŞETLER
+    # 1. KÜRESEL MANŞETLER (Global Reuters / BBC)
     {
         "cat": "breaking_world",
         "source": "Reuters & Global Breaking",
-        "q": "geopolitics OR diplomacy OR White House OR Kremlin OR NATO OR United Nations",
+        "q": "geopolitics OR diplomacy OR White House OR NATO OR United Nations",
         "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-    {
-        "cat": "breaking_world",
-        "source": "FT & World Affairs",
-        "q": "world summit OR foreign policy OR international crisis",
-        "hl": "en-GB", "gl": "GB", "ceid": "GB:en"
     },
 
     # 2. EKONOMİ & FİNANS
@@ -61,7 +55,7 @@ FEEDS_CONFIG = [
     {
         "cat": "economy_finance",
         "source": "TCMB & Borsa İstanbul",
-        "q": "TCMB OR faiz kararı OR Borsa İstanbul OR Hazine OR enflasyon",
+        "q": "TCMB OR faiz kararı OR Borsa İstanbul OR enflasyon",
         "hl": "tr", "gl": "TR", "ceid": "TR:tr"
     },
 
@@ -69,69 +63,45 @@ FEEDS_CONFIG = [
     {
         "cat": "luxury_horology",
         "source": "LVMH & Luxury Maisons",
-        "q": "LVMH OR Kering OR Richemont OR Hermes OR Brunello Cucinelli OR luxury goods",
+        "q": "LVMH OR Kering OR Richemont OR Hermes OR Brunello Cucinelli",
         "hl": "en-US", "gl": "US", "ceid": "US:en"
     },
     {
         "cat": "luxury_horology",
-        "source": "Haute Horlogerie & Watches",
-        "q": "Rolex OR Patek Philippe OR Audemars Piguet OR Vacheron Constantin OR watch auction",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-    {
-        "cat": "luxury_horology",
-        "source": "Swiss Watch Industry",
-        "q": "Swiss watch exports OR Watches and Wonders OR independent watchmaker",
+        "source": "Haute Horlogerie & Watchmaking",
+        "q": "Rolex OR Patek Philippe OR Audemars Piguet OR Vacheron Constantin OR Watches and Wonders",
         "hl": "en-US", "gl": "US", "ceid": "US:en"
     },
 
     # 4. GAYRİMENKUL
     {
         "cat": "real_estate_market",
-        "source": "Global Real Estate & REITs",
-        "q": "commercial real estate OR prime residential OR housing market OR REIT",
+        "source": "Real Estate & REITs",
+        "q": "commercial real estate OR housing market OR REIT OR gayrimenkul konut",
         "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-    {
-        "cat": "real_estate_market",
-        "source": "Türkiye Konut & Arsa",
-        "q": "konut fiyat endeksi OR konut satışları OR GYO OR arsa yatırımı",
-        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
     },
 
     # 5. YAPAY ZEKA & VC
     {
         "cat": "ai_vc_tech",
-        "source": "AI Tech & Breakthroughs",
-        "q": "artificial intelligence OR OpenAI OR Anthropic OR Nvidia AI OR AI models",
-        "hl": "en-US", "gl": "US", "ceid": "US:en"
-    },
-    {
-        "cat": "ai_vc_tech",
-        "source": "Venture Capital Deals",
-        "q": "venture capital OR Series A funding OR startup valuation OR VC investment",
+        "source": "AI Breakthroughs & Tech",
+        "q": "artificial intelligence OR OpenAI OR Anthropic OR Nvidia AI OR venture capital",
         "hl": "en-US", "gl": "US", "ceid": "US:en"
     },
 
     # 6. DIŞ TİCARET & LOJİSTİK
     {
         "cat": "trade_logistics",
-        "source": "Global Shipping & Freight",
-        "q": "container shipping OR freight rates OR Red Sea shipping OR supply chain",
+        "source": "Global Logistics & Shipping",
+        "q": "container shipping OR freight rates OR supply chain OR ihracat dış ticaret",
         "hl": "en-US", "gl": "US", "ceid": "US:en"
     },
-    {
-        "cat": "trade_logistics",
-        "source": "İhracat & Lojistik TR",
-        "q": "ihracat rakamları OR dış ticaret dengesi OR liman lojistiği OR navlun",
-        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
-    },
 
-    # 7. İZMİR & BODRUM
+    # 7. İZMİR & BODRUM RADARI
     {
         "cat": "aegean_radar",
-        "source": "İzmir Liman & Sanayi",
-        "q": "İzmir Alsancak Limanı OR Çandarlı Limanı OR İZTO OR EBSO",
+        "source": "İzmir Ticaret & Liman",
+        "q": "İzmir Alsancak Limanı OR EBSO OR İZTO OR İzmir ekonomi",
         "hl": "tr", "gl": "TR", "ceid": "TR:tr"
     },
     {
@@ -143,7 +113,7 @@ FEEDS_CONFIG = [
 ]
 
 # ---------------------------------------------------------
-# 3. PROMPT & ANALİZ
+# 3. AI ANALİZİ
 # ---------------------------------------------------------
 SYSTEM_PROMPT = """
 You are the Chief Intelligence Analyst for the "Private News Room" (Executive Intelligence Platform).
@@ -151,7 +121,7 @@ Evaluate, curate, and translate this news item into institutional intelligence.
 
 Return ONLY a raw JSON object with this exact schema:
 {
-  "importance_score": <integer between 72 and 98>,
+  "importance_score": <integer between 75 and 98>,
   "translations": {
     "TR": {
       "headline": "<Executive Turkish headline>",
@@ -178,7 +148,6 @@ Return ONLY a raw JSON object with this exact schema:
 def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nSummary: {summary_raw}"
 
-    # 1. Gemini
     if GEMINI_KEY:
         try:
             model = genai.GenerativeModel("gemini-2.5-flash")
@@ -188,9 +157,8 @@ def analyze_with_ai(title, summary_raw):
             )
             return json.loads(response.text.strip())
         except Exception as e:
-            print(f"Gemini hatası, Groq'a geçiliyor: {e}")
+            print(f"Gemini hatası: {e}")
 
-    # 2. Groq
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
@@ -208,20 +176,10 @@ def analyze_with_ai(title, summary_raw):
     return None
 
 # ---------------------------------------------------------
-# 4. SCRAPING VE VERİTABANI MOTORU
+# 4. VERİTABANI MOTORU
 # ---------------------------------------------------------
 def run_scraper():
-    print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
-    
-    # Eski kayıtları temizle
-    print(">>> ESKİ HABERLER TEMİZLENİYOR...")
-    old_docs = db.collection("articles").limit(100).stream()
-    del_count = 0
-    for d in old_docs:
-        d.reference.delete()
-        del_count += 1
-    print(f">>> {del_count} ESKİ HABER SİLİNDİ.")
-
+    print(">>> PRIVATE NEWS ROOM: HABER MOTORU BAŞLATILDI...")
     articles_col = db.collection("articles")
     added_count = 0
 
@@ -229,19 +187,22 @@ def run_scraper():
         cat = feed_info["cat"]
         source_name = feed_info["source"]
         
-        # Temiz ve hatasız URL kodlama
         encoded_q = urllib.parse.quote(feed_info["q"])
         url = f"https://news.google.com/rss/search?q={encoded_q}&hl={feed_info['hl']}&gl={feed_info['gl']}&ceid={feed_info['ceid']}"
 
         parsed = feedparser.parse(url)
         entries = parsed.entries or []
-        print(f"\n--- [{cat}] {source_name}: {len(entries)} aday haber bulundu ---")
+        print(f"\n--- [{cat}] {source_name}: {len(entries)} haber bulundu ---")
 
-        for entry in entries[:4]:  # Her kaynaktan en yeni 4 haberi işle
+        for entry in entries[:3]:  # Her alt başlıktan en yeni 3 haberi al
             raw_title = entry.title
             link = entry.link
             
             doc_id = hashlib.md5((raw_title + cat).encode("utf-8")).hexdigest()
+
+            # Zaten varsa atla (mükerrer kayıt engelleme)
+            if articles_col.document(doc_id).get().exists:
+                continue
 
             clean_summary = BeautifulSoup(getattr(entry, 'summary', ''), "html.parser").get_text()
 
@@ -268,7 +229,7 @@ def run_scraper():
             time.sleep(1)
 
     print(f"\n==========================================")
-    print(f">>> İŞLEM TAMAMLANDI! Toplam Eklenen Yeni Rapor: {added_count}")
+    print(f">>> BİTTİ! Eklenen Yeni Haber: {added_count}")
     print(f"==========================================")
 
 if __name__ == "__main__":
