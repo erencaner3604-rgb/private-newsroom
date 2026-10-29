@@ -100,7 +100,7 @@ def analyze_with_ai(title, summary_raw):
         except Exception as e:
             print(f"Gemini 3.8 Flash hatası, Groq'a geçiliyor: {e}")
 
-    # 2. Öncelik: Groq (openai/gpt-oss-120b)
+    # 2. Öncelik: Groq
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
@@ -118,7 +118,6 @@ def send_telegram_alert(score, cat, headline, doc_id):
         return
     emoji = "🚨" if score >= 96 else "⚡"
     
-    # Doğrudan sizin GitHub Pages web sitenize yönlendiren link
     app_url = f"https://erencanar2004-rgb.github.io/private-newsroom/#{doc_id}"
     
     msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Sistemde Oku & Analizi Gör]({app_url})"
@@ -135,29 +134,30 @@ def run_scraper():
     print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
     articles_col = db.collection("articles")
     
-    # 3 Günden eski haberleri temizle
-    print(">>> 3 GÜNDEN ESKİ HABERLER TEMİZLENİYOR...")
+    # 3 Günden eski veya tarihi bozuk/olmayan sahte haberleri temizle
+    print(">>> ESKİ VE BOZUK VERİLER TEMİZLENİYOR...")
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
     docs = articles_col.stream()
     del_count = 0
     for d in docs:
         data = d.to_dict()
         pub_str = data.get("published_at")
-        if pub_str:
-            try:
-                if datetime.fromisoformat(pub_str) < three_days_ago:
-                    d.reference.delete()
-                    del_count += 1
-            except:
-                pass
-    print(f">>> {del_count} ESKİ HABER SİLİNDİ.")
+        try:
+            if not pub_str or datetime.fromisoformat(pub_str) < three_days_ago:
+                d.reference.delete()
+                del_count += 1
+        except Exception:
+            d.reference.delete()
+            del_count += 1
+    print(f">>> {del_count} ESKİ/GEÇERSİZ HABER SİLİNDİ.")
 
     added_count = 0
     for feed_info in FEEDS_CONFIG:
         cat = feed_info["cat"]
         source_name = feed_info["source"]
         
-        encoded_q = urllib.parse.quote(feed_info["q"])
+        # Sadece son 2 günün haberlerini filtreler
+        encoded_q = urllib.parse.quote(f"{feed_info['q']} when:2d")
         url = f"https://news.google.com/rss/search?q={encoded_q}&hl={feed_info['hl']}&gl={feed_info['gl']}&ceid={feed_info['ceid']}"
 
         parsed = feedparser.parse(url)
