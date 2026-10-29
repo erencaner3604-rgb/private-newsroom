@@ -4,7 +4,7 @@ on:
   schedule:
     # Günde iki kez çalışır: 04:00 UTC (07:00 TRT) ve 16:00 UTC (19:00 TRT)
     - cron: '0 4,16 * * *'
-  workflow_dispatch: # İstediğiniz an GitHub'dan tek tıkla elle çalıştırma butonu
+  workflow_dispatch: # İstediğiniz an tek tıkla elle çalıştırma butonu
 
 permissions:
   contents: read
@@ -23,7 +23,6 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install Python Dependencies
         run: |
