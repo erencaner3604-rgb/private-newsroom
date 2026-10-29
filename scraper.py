@@ -118,8 +118,8 @@ def send_telegram_alert(score, cat, headline, doc_id):
         return
     emoji = "🚨" if score >= 96 else "⚡"
     
-    if __name__ == "__main__":
-    run_scraper()
+    # Sitenin tam ve doğru GitHub Pages adresi
+    app_url = f"https://erencanar3604-rgb.github.io/private-newsroom/#{doc_id}"
     
     msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Sistemde Oku & Analizi Gör]({app_url})"
     api_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -135,7 +135,7 @@ def run_scraper():
     print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
     articles_col = db.collection("articles")
     
-    # 3 Günden eski veya tarihi bozuk/olmayan sahte haberleri temizle
+    # 3 Günden eski haberleri temizle
     print(">>> ESKİ VE BOZUK VERİLER TEMİZLENİYOR...")
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
     docs = articles_col.stream()
@@ -157,7 +157,6 @@ def run_scraper():
         cat = feed_info["cat"]
         source_name = feed_info["source"]
         
-        # Sadece son 2 günün haberlerini filtreler
         encoded_q = urllib.parse.quote(f"{feed_info['q']} when:2d")
         url = f"https://news.google.com/rss/search?q={encoded_q}&hl={feed_info['hl']}&gl={feed_info['gl']}&ceid={feed_info['ceid']}"
 
@@ -211,6 +210,5 @@ def run_scraper():
     print(f">>> İŞLEM TAMAMLANDI! Toplam Eklenen Yeni Rapor: {added_count}")
     print(f"==========================================")
 
-if __name__ == "__main__":   
-    send_telegram_alert(92, "CANLI TEST", "Sistem basariyla yayinda! Link dogrulaniyor 🚀", "test_id")
+if __name__ == "__main__":
     run_scraper()
