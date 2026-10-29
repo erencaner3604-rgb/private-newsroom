@@ -113,11 +113,15 @@ def analyze_with_ai(title, summary_raw):
             print(f"Groq hatası: {e}")
     return None
 
-def send_telegram_alert(score, cat, headline, url):
+def send_telegram_alert(score, cat, headline, doc_id):
     if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
         return
     emoji = "🚨" if score >= 96 else "⚡"
-    msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Brifingi Oku & Detaylar]({url})"
+    
+    # Doğrudan sizin GitHub Pages web sitenize yönlendiren link
+    app_url = f"https://erencanar2004-rgb.github.io/private-newsroom/#{doc_id}"
+    
+    msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Sistemde Oku & Analizi Gör]({app_url})"
     api_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
     try:
         requests.post(api_url, json={"chat_id": TELEGRAM_CHAT_ID, "text": msg, "parse_mode": "Markdown"})
@@ -195,10 +199,10 @@ def run_scraper():
             added_count += 1
             print(f"  [+] Eklendi ({score/10:.1f}): {raw_title[:60]}...")
             
-            # VIP Bildirimi (93 ve üzeri puan)
-            if int(score) >= 70:
+            # VIP Bildirimi (85 ve üzeri puanlar Telegram'a düşer)
+            if int(score) >= 85:
                 tr_headline = translations.get("TR", {}).get("headline", raw_title)
-                send_telegram_alert(score, cat, tr_headline, link)
+                send_telegram_alert(score, cat, tr_headline, doc_id)
                 
             time.sleep(1)
 
