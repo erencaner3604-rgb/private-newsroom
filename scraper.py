@@ -87,6 +87,8 @@ Return ONLY a raw JSON object with this exact schema:
 
 def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nSummary: {summary_raw}"
+    
+    # 1. Öncelik: Gemini 3.8 Flash
     if GEMINI_KEY:
         try:
             model = genai.GenerativeModel("gemini-3.8-flash")
@@ -96,12 +98,13 @@ def analyze_with_ai(title, summary_raw):
             )
             return json.loads(response.text.strip())
         except Exception as e:
-            print(f"Gemini hatası, Groq'a geçiliyor: {e}")
+            print(f"Gemini 3.8 Flash hatası, Groq'a geçiliyor: {e}")
 
+    # 2. Öncelik: Groq (openai/gpt-oss-120b)
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
-                model="llama-3.3-70b-versatile",
+                model="openai/gpt-oss-120b",
                 messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": content}],
                 response_format={"type": "json_object"}
             )
@@ -128,7 +131,7 @@ def run_scraper():
     print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
     articles_col = db.collection("articles")
     
-    # 1. ÖZELLİK: 3 GÜNDEN ESKİ HABERLERİ SİLME
+    # 3 Günden eski haberleri temizle
     print(">>> 3 GÜNDEN ESKİ HABERLER TEMİZLENİYOR...")
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
     docs = articles_col.stream()
@@ -165,7 +168,6 @@ def run_scraper():
             if articles_col.document(doc_id).get().exists:
                 continue
 
-            # 2. ÖZELLİK: GÖRSEL (THUMBNAIL) ÇEKME
             soup = BeautifulSoup(getattr(entry, 'summary', ''), "html.parser")
             clean_summary = soup.get_text()
             img_tag = soup.find('img')
@@ -193,7 +195,7 @@ def run_scraper():
             added_count += 1
             print(f"  [+] Eklendi ({score/10:.1f}): {raw_title[:60]}...")
             
-            # 3. ÖZELLİK: TELEGRAM ALARMI (93 VE ÜZERİ PUANLAR İÇİN)
+            # VIP Bildirimi (93 ve üzeri puan)
             if int(score) >= 93:
                 tr_headline = translations.get("TR", {}).get("headline", raw_title)
                 send_telegram_alert(score, cat, tr_headline, link)
