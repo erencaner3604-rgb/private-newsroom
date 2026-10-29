@@ -158,20 +158,20 @@ RULES:
     "TR": {
       "headline": "<Executive Turkish headline>",
       "takeaways": [
-        "<Key 1 Turkish in takeaway>",
-        "<Key 2 Turkish in takeaway>",
-        "<Key 3 Turkish in takeaway>"
+        "<Key 1 Turkish takeaway>",
+        "<Key 2 Turkish takeaway>",
+        "<Key 3 Turkish takeaway>"
       ],
-      "summary": "<In-depth Turkish in institutional summary>"
+      "summary": "<In-depth Turkish institutional summary>"
     },
     "EN": {
       "headline": "<Executive English headline>",
       "takeaways": [
-        "<Key 1 English in takeaway>",
-        "<Key 2 English in takeaway>",
-        "<Key 3 English in takeaway>"
+        "<Key 1 English takeaway>",
+        "<Key 2 English takeaway>",
+        "<Key 3 English takeaway>"
       ],
-      "summary": "<In-depth English in institutional summary>"
+      "summary": "<In-depth English institutional summary>"
     }
   }
 }
@@ -186,7 +186,7 @@ CRITICAL SCORING LOGIC:
 def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nContext/Snippet: {summary_raw}"
 
-    # 1. Öncelik: Gemini
+    # 1. Gemini
     if GEMINI_KEY:
         try:
             model = genai.GenerativeModel("gemini-2.5-flash")
@@ -198,7 +198,7 @@ def analyze_with_ai(title, summary_raw):
         except Exception as e:
             print(f"Gemini hatası, Groq'a geçiliyor: {e}")
 
-    # 2. Öncelik: Groq (Yedek)
+    # 2. Groq (Yedek)
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
@@ -220,6 +220,16 @@ def analyze_with_ai(title, summary_raw):
 # ---------------------------------------------------------
 def run_scraper():
     print(">>> PRIVATE NEWS ROOM: HABER TARAMA BAŞLATILDI...")
+    
+    # Eski/tekdüze haberleri veritabanından süpürür
+    print(">>> ESKİ HABERLER TEMİZLENİYOR...")
+    old_docs = db.collection("articles").limit(100).stream()
+    deleted_count = 0
+    for d in old_docs:
+        d.reference.delete()
+        deleted_count += 1
+    print(f">>> {deleted_count} ADET ESKİ HABER SİLİNDİ, YENİ 7 KATEGORİ ÇEKİLİYOR...")
+
     articles_col = db.collection("articles")
     added_count = 0
 
@@ -232,20 +242,17 @@ def run_scraper():
         parsed = feedparser.parse(url)
         print(f"\n--- Kategori: [{cat}] | Kaynak: {source_name} ({len(parsed.entries)} aday haber) ---")
 
-        for entry in parsed.entries[:5]:  # Her kaynaktan en güncel ilk 5 haberi tara
+        for entry in parsed.entries[:5]:
             raw_title = entry.title
             link = entry.link
             
-            # Benzersiz kimlik (ID)
             doc_id = hashlib.md5((raw_title + cat).encode("utf-8")).hexdigest()
 
-            # Zaten veritabanında var mı kontrol et
             if articles_col.document(doc_id).get().exists:
                 continue
 
             clean_summary = BeautifulSoup(entry.summary if hasattr(entry, 'summary') else "", "html.parser").get_text()
 
-            # Yapay Zeka ile Analiz Et
             ai_data = analyze_with_ai(raw_title, clean_summary)
             if not ai_data:
                 continue
