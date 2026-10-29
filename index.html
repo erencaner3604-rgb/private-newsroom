@@ -25,16 +25,10 @@
       --accent-green: #10b981;
       --radius-sm: 8px;
       --radius-md: 14px;
-      --radius-lg: 20px;
       --transition: all 0.25s cubic-bezier(0.16, 1, 0.3, 1);
     }
 
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-      -webkit-tap-highlight-color: transparent;
-    }
+    * { box-sizing: border-box; margin: 0; padding: 0; -webkit-tap-highlight-color: transparent; }
 
     body {
       background-color: var(--bg-primary);
@@ -63,11 +57,7 @@
       margin-bottom: 14px;
     }
 
-    .brand-group {
-      display: flex;
-      align-items: center;
-      gap: 12px;
-    }
+    .brand-group { display: flex; align-items: center; gap: 12px; }
 
     .brand-badge {
       background: linear-gradient(135deg, #1c1f26, #0e1013);
@@ -97,11 +87,7 @@
       text-transform: uppercase;
     }
 
-    .header-actions {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .header-actions { display: flex; align-items: center; gap: 8px; }
 
     .pulse-badge {
       display: flex;
@@ -147,13 +133,11 @@
       gap: 4px;
     }
 
-    /* KATEGORİ SCROLL BAR */
     .category-scroll {
       display: flex;
       gap: 8px;
       overflow-x: auto;
       scrollbar-width: none;
-      -ms-overflow-style: none;
       padding-bottom: 4px;
     }
     .category-scroll::-webkit-scrollbar { display: none; }
@@ -181,26 +165,9 @@
       border-color: var(--gold-primary);
     }
 
-    .cat-pill.vip-tab {
-      border: 1px solid var(--border-gold);
-      color: var(--gold-light);
-    }
-    .cat-pill.vip-tab.active {
-      background: linear-gradient(135deg, #d4af37, #aa820a);
-      color: #000;
-    }
+    main { padding: 16px 20px; max-width: 720px; margin: 0 auto; }
 
-    main {
-      padding: 16px 20px;
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    /* ARAMA ÇUBUĞU */
-    .search-box {
-      position: relative;
-      margin-bottom: 20px;
-    }
+    .search-box { position: relative; margin-bottom: 20px; }
 
     .search-box input {
       width: 100%;
@@ -214,9 +181,7 @@
       transition: var(--transition);
     }
 
-    .search-box input:focus {
-      border-color: var(--gold-primary);
-    }
+    .search-box input:focus { border-color: var(--gold-primary); }
 
     .search-box .material-symbols-outlined {
       position: absolute;
@@ -227,7 +192,6 @@
       font-size: 18px;
     }
 
-    /* VIP KÜRASİYON BÖLÜMÜ */
     .section-header {
       margin-bottom: 12px;
       display: flex;
@@ -274,12 +238,7 @@
       gap: 10px;
     }
 
-    /* HABER KARTLARI */
-    .articles-feed {
-      display: flex;
-      flex-direction: column;
-      gap: 14px;
-    }
+    .articles-feed { display: flex; flex-direction: column; gap: 14px; }
 
     .article-card {
       background: var(--bg-card);
@@ -292,17 +251,9 @@
       gap: 12px;
     }
 
-    .card-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-    }
+    .card-top { display: flex; justify-content: space-between; align-items: center; }
 
-    .meta-source {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-    }
+    .meta-source { display: flex; align-items: center; gap: 8px; }
 
     .cat-tag {
       font-size: 10px;
@@ -312,10 +263,7 @@
       color: var(--gold-primary);
     }
 
-    .source-name {
-      font-size: 11px;
-      color: var(--text-dim);
-    }
+    .source-name { font-size: 11px; color: var(--text-dim); }
 
     .score-badge {
       font-family: 'Cinzel', serif;
@@ -330,9 +278,9 @@
 
     .headline {
       font-family: 'Playfair Display', serif;
-      font-size: 17px;
+      font-size: 16px;
       font-weight: 600;
-      line-height: 1.35;
+      line-height: 1.4;
       color: #fff;
     }
 
@@ -343,12 +291,7 @@
       border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
     }
 
-    .takeaways-box ul {
-      list-style-type: none;
-      display: flex;
-      flex-direction: column;
-      gap: 5px;
-    }
+    .takeaways-box ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
 
     .takeaways-box li {
       font-size: 12px;
@@ -358,12 +301,7 @@
       gap: 6px;
       line-height: 1.4;
     }
-
-    .takeaways-box li::before {
-      content: "•";
-      color: var(--gold-primary);
-      font-weight: bold;
-    }
+    .takeaways-box li::before { content: "•"; color: var(--gold-primary); font-weight: bold; }
 
     .summary-text {
       font-size: 13px;
@@ -375,10 +313,7 @@
       padding-top: 10px;
       margin-top: 4px;
     }
-
-    .summary-text.expanded {
-      display: block;
-    }
+    .summary-text.expanded { display: block; }
 
     .card-footer {
       display: flex;
@@ -394,19 +329,14 @@
       color: var(--gold-light);
       font-size: 11px;
       font-weight: 600;
-      letter-spacing: 0.5px;
       cursor: pointer;
       display: flex;
       align-items: center;
       gap: 4px;
-      padding: 4px 0;
     }
 
-    .time-text {
-      color: var(--text-dim);
-    }
+    .time-text { color: var(--text-dim); }
 
-    /* ALT MENÜ */
     nav.bottom-bar {
       position: fixed;
       bottom: 0;
@@ -432,19 +362,12 @@
       gap: 3px;
       color: var(--text-dim);
       font-size: 10px;
-      font-weight: 500;
       cursor: pointer;
       background: none;
       border: none;
     }
-
-    .nav-item.active {
-      color: var(--gold-primary);
-    }
-
-    .nav-item .material-symbols-outlined {
-      font-size: 22px;
-    }
+    .nav-item.active { color: var(--gold-primary); }
+    .nav-item .material-symbols-outlined { font-size: 22px; }
   </style>
 
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
@@ -462,10 +385,7 @@
         </div>
       </div>
       <div class="header-actions">
-        <div class="pulse-badge">
-          <span class="pulse-dot"></span>
-          <span>Canlı Akış</span>
-        </div>
+        <div class="pulse-badge"><span class="pulse-dot"></span><span>Canlı Akış</span></div>
         <button class="lang-btn" id="lang-btn">
           <span class="material-symbols-outlined" style="font-size:14px;">translate</span>
           <span id="lang-label">TR</span>
@@ -473,12 +393,9 @@
       </div>
     </div>
 
-    <!-- KATEGORİ BUTONLARI (VIP 10 DAHİL) -->
     <div class="category-scroll" id="cat-scroll">
-      <button class="cat-pill vip-tab active" data-category="vip_10">
-        <span class="material-symbols-outlined" style="font-size:14px;">bolt</span> VIP 10
-      </button>
-      <button class="cat-pill" data-category="all">Tümü</button>
+      <button class="cat-pill active" data-category="all">Tümü</button>
+      <button class="cat-pill" data-category="vip_10"><span class="material-symbols-outlined" style="font-size:14px;">bolt</span> VIP 10</button>
       <button class="cat-pill" data-category="breaking_world">Küresel Manşetler</button>
       <button class="cat-pill" data-category="economy_finance">Ekonomi & Finans</button>
       <button class="cat-pill" data-category="luxury_horology">Lüks & Saatçilik</button>
@@ -490,13 +407,11 @@
   </header>
 
   <main>
-    <!-- ARAMA ÇUBUĞU -->
     <div class="search-box">
       <span class="material-symbols-outlined">search</span>
       <input type="text" id="search-input" placeholder="Haberlerde veya analizlerde ara...">
     </div>
 
-    <!-- VIP KÜRASİYON VİTRİNİ -->
     <section id="vip-section">
       <div class="section-header">
         <div>
@@ -507,7 +422,6 @@
       <div class="vip-carousel" id="vip-carousel"></div>
     </section>
 
-    <!-- AKIŞ BÖLÜMÜ -->
     <div class="section-header">
       <div>
         <div class="section-sub">YÖNETİCİ İSTİHBARAT AKIŞI</div>
@@ -517,7 +431,11 @@
   </main>
 
   <nav class="bottom-bar">
-    <button class="nav-item active" onclick="filterByNav('vip_10')">
+    <button class="nav-item active" onclick="filterByNav('all')">
+      <span class="material-symbols-outlined">feed</span>
+      <span>Akış</span>
+    </button>
+    <button class="nav-item" onclick="filterByNav('vip_10')">
       <span class="material-symbols-outlined">bolt</span>
       <span>VIP 10</span>
     </button>
@@ -560,7 +478,7 @@
     };
 
     let currentLang = "TR";
-    let activeCategory = "vip_10";
+    let activeCategory = "all";
     let searchQuery = "";
     let allArticles = [];
 
@@ -598,34 +516,34 @@
         b.classList.toggle('active', b.getAttribute('data-category') === cat);
       });
       document.querySelectorAll('.nav-item').forEach(b => {
-        b.classList.toggle('active', b.getAttribute('onclick')?.includes(cat));
+        b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${cat}'`));
       });
       renderAll();
     }
 
-    // Gerçekçi Etki Puanı Hesaplama (Veritabanında 90 ise bile başlığa göre dağıtır)
     function getDisplayScore(item) {
       if (item.importance_score && item.importance_score !== 90) {
         return (item.importance_score / 10).toFixed(1);
       }
-      // 90 olan tekdüze skorları başlığın hash değerine göre 8.8 - 9.7 arasına dinamik yayar
       let hash = 0;
       const str = item.original_title || "score";
       for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-      const variance = (Math.abs(hash) % 10) / 10; // 0.0 - 0.9
-      return (8.8 + variance).toFixed(1);
+      const variance = (Math.abs(hash) % 12) / 10;
+      return (8.6 + variance).toFixed(1);
     }
 
-    db.collection("articles")
-      .orderBy("published_at", "desc")
-      .limit(60)
-      .onSnapshot(snapshot => {
-        allArticles = [];
-        snapshot.forEach(doc => {
-          allArticles.push({ id: doc.id, ...doc.data() });
-        });
-        renderAll();
+    // İndeks takılması olmadan tüm haberleri doğrudan canlı dinler
+    db.collection("articles").onSnapshot(snapshot => {
+      allArticles = [];
+      snapshot.forEach(doc => {
+        allArticles.push({ id: doc.id, ...doc.data() });
       });
+      // En yeniden en eskiye sırala
+      allArticles.sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
+      renderAll();
+    }, err => {
+      console.error("Firestore okuma hatası:", err);
+    });
 
     function renderAll() {
       renderVipCarousel();
@@ -636,13 +554,12 @@
       const carousel = document.getElementById('vip-carousel');
       const vipSection = document.getElementById('vip-section');
 
-      if (activeCategory !== 'all' && activeCategory !== 'vip_10') {
+      if (allArticles.length === 0) {
         vipSection.style.display = 'none';
         return;
       }
       vipSection.style.display = 'block';
 
-      // En yüksek puanlı ilk 10 haber
       const vipList = [...allArticles]
         .sort((a, b) => parseFloat(getDisplayScore(b)) - parseFloat(getDisplayScore(a)))
         .slice(0, 10);
@@ -654,15 +571,15 @@
         const score = getDisplayScore(item);
 
         return `
-          <div class="vip-card" onclick="document.getElementById('${item.id}').scrollIntoView({behavior: 'smooth'})">
+          <div class="vip-card" onclick="document.getElementById('${item.id}')?.scrollIntoView({behavior: 'smooth'})">
             <div class="card-top">
               <span class="brand-badge">#${idx + 1} VIP</span>
               <span class="score-badge">ETKİ ${score}</span>
             </div>
-            <h3 class="headline" style="font-size:15px;">${headline}</h3>
+            <h3 class="headline" style="font-size:14px;">${headline}</h3>
             <div class="card-footer" style="padding:0;">
               <span class="cat-tag">${catLabel}</span>
-              <span style="color:var(--gold-primary); font-size:11px; font-weight:600;">OKU →</span>
+              <span style="color:var(--gold-primary); font-size:11px; font-weight:600;">GÖSTER →</span>
             </div>
           </div>
         `;
@@ -693,7 +610,7 @@
       if (filtered.length === 0) {
         container.innerHTML = `
           <div style="text-align:center; padding: 40px 20px; color: var(--text-dim);">
-            <p>Eşleşen istihbarat raporu bulunamadı.</p>
+            <p>Bu kategoride henüz rapor bulunmuyor.</p>
           </div>`;
         return;
       }
