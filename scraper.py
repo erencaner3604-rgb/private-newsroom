@@ -118,7 +118,8 @@ def send_telegram_alert(score, cat, headline, doc_id):
         return
     emoji = "🚨" if score >= 96 else "⚡"
     
-    app_url = f"https://erencanar3604-rgb.github.io/private-newsroom/#{doc_id}"
+    if __name__ == "__main__":
+    run_scraper()
     
     msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Sistemde Oku & Analizi Gör]({app_url})"
     api_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
