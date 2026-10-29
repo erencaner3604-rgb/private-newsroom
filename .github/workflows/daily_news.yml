@@ -20,12 +20,11 @@ jobs:
         uses: actions/setup-python@v5
         with:
           python-version: '3.11'
-          cache: 'pip'
 
       - name: Install Python Dependencies
         run: |
           python -m pip install --upgrade pip
-          pip install -r requirements.txt
+          pip install feedparser firebase-admin google-generativeai requests beautifulsoup4
 
       - name: Execute Autonomous News Scraper
         env:
