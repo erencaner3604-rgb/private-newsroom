@@ -1,0 +1,38 @@
+name: Autonomous Executive News Room Bot
+
+on:
+  schedule:
+    # Günde iki kez çalışır: 04:00 UTC (07:00 TRT) ve 16:00 UTC (19:00 TRT)
+    - cron: '0 4,16 * * *'
+  workflow_dispatch: # İstediğiniz an GitHub'dan tek tıkla elle çalıştırma butonu
+
+permissions:
+  contents: read
+
+jobs:
+  scrape-and-curate:
+    name: Scrape Feeds, Curate via Gemini & Push to Firestore
+    runs-on: ubuntu-latest
+    timeout-minutes: 25
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set Up Python 3.11
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: 'pip'
+
+      - name: Install Python Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install feedparser beautifulsoup4 requests google-generativeai firebase-admin lxml
+
+      - name: Execute Autonomous News Scraper
+        env:
+          GEMINI_API_KEY: ${{ secrets.GEMINI_API_KEY }}
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: |
+          python scraper.py
