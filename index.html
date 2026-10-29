@@ -120,7 +120,7 @@
       </div>
 
       <div class="flex items-center space-x-2">
-        <button onclick="app.cycleGlobalLanguage()" title="Dili Değiştir"
+        <button onclick="app.cycleGlobalLanguage()" title="Dili Değiştir (TR / EN)"
           class="px-2.5 py-1.5 rounded-lg bg-charcoal border border-borderline hover:border-gold/50 text-xs font-mono text-gold transition flex items-center space-x-1">
           <svg class="w-3.5 h-3.5 text-neutral-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
             <path stroke-linecap="round" stroke-linejoin="round" stroke-width="1.75" d="M3 5h12M9 3v2m1.048 9.5A18.022 18.022 0 016.412 9m6.088 9h7M11 21l5-10 5 10M12.751 5C11.783 10.77 8.07 15.61 3 18.129" />
@@ -257,12 +257,10 @@
       <div id="drawerCategoriesList" class="mt-4 space-y-1.5"></div>
 
       <div class="mt-6 pt-5 border-t border-borderline">
-        <label class="block text-[10px] font-mono uppercase tracking-widest text-neutral-400 mb-2">Varsayılan Dil</label>
-        <div class="grid grid-cols-4 gap-1.5 bg-obsidian p-1 rounded-lg border border-borderline">
-          <button onclick="app.setGlobalLanguage('TR')" data-global-lang="TR" class="py-1.5 rounded text-xs font-mono font-medium transition">TR</button>
-          <button onclick="app.setGlobalLanguage('EN')" data-global-lang="EN" class="py-1.5 rounded text-xs font-mono font-medium transition">EN</button>
-          <button onclick="app.setGlobalLanguage('FR')" data-global-lang="FR" class="py-1.5 rounded text-xs font-mono font-medium transition">FR</button>
-          <button onclick="app.setGlobalLanguage('RU')" data-global-lang="RU" class="py-1.5 rounded text-xs font-mono font-medium transition">RU</button>
+        <label class="block text-[10px] font-mono uppercase tracking-widest text-neutral-400 mb-2">Aktif Dil</label>
+        <div class="grid grid-cols-2 gap-2 bg-obsidian p-1 rounded-lg border border-borderline">
+          <button onclick="app.setGlobalLanguage('TR')" data-global-lang="TR" class="py-1.5 rounded text-xs font-mono font-medium transition">TR (Türkçe)</button>
+          <button onclick="app.setGlobalLanguage('EN')" data-global-lang="EN" class="py-1.5 rounded text-xs font-mono font-medium transition">EN (English)</button>
         </div>
       </div>
     </div>
@@ -286,10 +284,8 @@
       </button>
 
       <div class="flex items-center bg-obsidian p-1 rounded-lg border border-borderline">
-        <button onclick="app.setReaderLanguage('TR')" data-reader-lang="TR" class="px-2.5 py-1 rounded text-xs font-mono font-semibold transition">TR</button>
-        <button onclick="app.setReaderLanguage('EN')" data-reader-lang="EN" class="px-2.5 py-1 rounded text-xs font-mono font-semibold transition">EN</button>
-        <button onclick="app.setReaderLanguage('FR')" data-reader-lang="FR" class="px-2.5 py-1 rounded text-xs font-mono font-semibold transition">FR</button>
-        <button onclick="app.setReaderLanguage('RU')" data-reader-lang="RU" class="px-2.5 py-1 rounded text-xs font-mono font-semibold transition">RU</button>
+        <button onclick="app.setReaderLanguage('TR')" data-reader-lang="TR" class="px-3 py-1 rounded text-xs font-mono font-semibold transition">TR</button>
+        <button onclick="app.setReaderLanguage('EN')" data-reader-lang="EN" class="px-3 py-1 rounded text-xs font-mono font-semibold transition">EN</button>
       </div>
 
       <div class="flex items-center space-x-1.5">
@@ -332,17 +328,17 @@
 
       <div class="mt-10 pt-5 border-t border-borderline flex flex-col sm:flex-row sm:items-center justify-between gap-2 text-[11px] font-mono text-neutral-500">
         <div>KAYNAK MASA: <span id="readerFooterSource" class="text-neutral-300"></span></div>
-        <div>GEMINI 1.5 FLASH KÜRASYONU • REKLAMSIZ DİREKT OKUMA</div>
+        <div>GEMINI FLASH EXECUTIVE KÜRASYONU</div>
       </div>
     </article>
   </div>
 
   <!-- ================= FIREBASE & APP ENGINE ================= -->
   <script type="module">
-    import { initializeApp, getApps, deleteApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-app.js";
     import { getFirestore, collection, query, orderBy, limit, onSnapshot } from "https://www.gstatic.com/firebasejs/10.13.1/firebase-firestore.js";
 
-    // DOĞRUDAN SENİN PROJE BİLGİLERİN ENTEGRE EDİLDİ
+    // ORİJİNAL FIREBASE PROJE ANAHTARLARIN (TAM VE EKSİKSİZ)
     const DEFAULT_FIREBASE_CONFIG = {
       apiKey: "AIzaSyDFN96ONtIeQnWtC_wrIC2AUPtF8j7sY84",
       authDomain: "news-c0d54.firebaseapp.com",
@@ -353,20 +349,18 @@
     };
 
     const CATEGORIES = [
-      { id: 'headlines', name: 'Günün En Kritik 10 Haberi', shortName: 'VIP 10', badge: 'VIP KÜRASYON • TOP 10', sources: 'Tüm 38 Global ve Yerel Masa' },
-      { id: 'economy', name: 'Küresel Ekonomi & Finans', shortName: 'Ekonomi & Finans', badge: 'PİYASALAR & MAKRO', sources: 'CNBC • Yahoo Finance • Investing.com • Reuters • Ekonomim • Dünya' },
-      { id: 'luxury', name: 'Lüks Perakende, Moda & Saat', shortName: 'Lüks & Saatçilik', badge: 'MAISONS & HAUTE HORLOGERIE', sources: 'Luxe Digital • CPP-Luxury • FashionNetwork • Hodinkee • Monochrome' },
-      { id: 'tech', name: 'Girişimcilik, Teknoloji & Yapay Zeka', shortName: 'Girişim & AI', badge: 'VENTURE CAPITAL & AI', sources: 'TechCrunch • VentureBeat • Hacker News • Webrazzi • Swipeline' },
-      { id: 'realestate', name: 'Gayrimenkul, Şehircilik & Tasarım', shortName: 'Kentsel Tasarım', badge: 'MİMARLIK & İMAR', sources: 'ArchDaily • Dezeen • Planetizen • Arkitera • Emlak Kulisi' },
-      { id: 'local', name: 'İzmir & Bodrum Yerel Radarı', shortName: 'İzmir & Bodrum', badge: 'EGE STRATEJİK RADAR', sources: 'İz Gazete • Ege’de Sonsöz • Gerçek İzmir • Kent TV • Bodrum Gündem' },
-      { id: 'culture', name: 'Kültür, Sanat & Spor', shortName: 'Kültür & Spor', badge: 'SANAT, YAZI & ARENA', sources: 'Sokrates Dergi • Artsy • Aposto • BBC Sport • NTV Spor' }
+      { id: 'headlines', name: 'Günün En Kritik 10 Haberi', shortName: 'VIP 10', badge: 'VIP KÜRASYON • TOP 10', sources: 'Tüm Masalar' },
+      { id: 'economy', name: 'Küresel Ekonomi & Finans', shortName: 'Ekonomi & Finans', badge: 'PİYASALAR & MAKRO', sources: 'Bloomberg • Reuters • Dünya • Ekonomim' },
+      { id: 'luxury', name: 'Lüks Perakende, Moda & Saat', shortName: 'Lüks & Saatçilik', badge: 'MAISONS & HAUTE HORLOGERIE', sources: 'Luxe Digital • Hodinkee • BoF' },
+      { id: 'tech', name: 'Girişimcilik, Teknoloji & Yapay Zeka', shortName: 'Girişim & AI', badge: 'VENTURE CAPITAL & AI', sources: 'TechCrunch • Swipeline • Webrazzi' },
+      { id: 'realestate', name: 'Gayrimenkul, Şehircilik & Tasarım', shortName: 'Kentsel Tasarım', badge: 'MİMARLIK & İMAR', sources: 'ArchDaily • Dezeen • Arkitera' },
+      { id: 'local', name: 'İzmir & Bodrum Yerel Radarı', shortName: 'İzmir & Bodrum', badge: 'EGE STRATEJİK RADAR', sources: 'Ege Haberleri • Kent TV • Bodrum Haber' },
+      { id: 'culture', name: 'Kültür, Sanat & Spor', shortName: 'Kültür & Spor', badge: 'SANAT, YAZI & ARENA', sources: 'Sokrates • Artsy • F1 • EuroLeague' }
     ];
 
     const UI_LABELS = {
       TR: { takeaways: 'YÖNETİCİ ÖZETİ — KRİTİK ÇIKARIMLAR', summary: 'KAPSAMLI İSTİHBARAT BRİFİNGİ', edition: 'TÜRKÇE EDİSYON' },
-      EN: { takeaways: 'EXECUTIVE KEY TAKEAWAYS', summary: 'COMPREHENSIVE INTELLIGENCE BRIEF', edition: 'ENGLISH EDITION' },
-      FR: { takeaways: 'POINTS CLÉS EXÉCUTIFS', summary: 'NOTE DE SYNTHÈSE APPROFONDIE', edition: 'ÉDITION FRANÇAISE' },
-      RU: { takeaways: 'КЛЮЧЕВЫЕ ВЫВОДЫ ДЛЯ РУКОВОДСТВА', summary: 'ПОЛНЫЙ АНАЛИТИЧЕСКИЙ ОБЗОР', edition: 'РУССКОЕ ИЗДАНИЕ' }
+      EN: { takeaways: 'EXECUTIVE KEY TAKEAWAYS', summary: 'COMPREHENSIVE INTELLIGENCE BRIEF', edition: 'ENGLISH EDITION' }
     };
 
     class ExecutiveTerminalApp {
@@ -404,8 +398,6 @@
           if (this.activeArticle) {
             if (e.key === '1') this.setReaderLanguage('TR');
             if (e.key === '2') this.setReaderLanguage('EN');
-            if (e.key === '3') this.setReaderLanguage('FR');
-            if (e.key === '4') this.setReaderLanguage('RU');
           }
         });
       }
@@ -447,7 +439,7 @@
         try {
           const app = initializeApp(DEFAULT_FIREBASE_CONFIG);
           const db = getFirestore(app);
-          const q = query(collection(db, 'articles'), orderBy('published_at', 'desc'), limit(100));
+          const q = query(collection(db, 'articles'), orderBy('published_at', 'desc'), limit(150));
 
           this.setConnectionStatus('BAĞLANIYOR', false);
 
@@ -542,7 +534,7 @@
           const q = this.searchQuery.toLowerCase();
           list = list.filter((a) => {
             const t = this.getTranslation(a, this.globalLanguage);
-            return t.headline.toLowerCase().includes(q) || t.summary.toLowerCase().includes(q);
+            return (t.headline || '').toLowerCase().includes(q) || (t.summary || '').toLowerCase().includes(q);
           });
         }
         return list;
@@ -576,7 +568,7 @@
                     <span class="text-[11px] font-mono text-neutral-400">ETKİ <strong class="text-gold">${((art.importance_score||90)/10).toFixed(1)}</strong></span>
                   </div>
                   <h4 class="font-serif text-lg font-semibold text-white line-clamp-3 mb-2">${t.headline}</h4>
-                  <p class="text-xs text-neutral-400 line-clamp-2">${t.takeaways[0] || t.summary}</p>
+                  <p class="text-xs text-neutral-400 line-clamp-2">${(t.takeaways && t.takeaways[0]) || t.summary || ''}</p>
                 </div>
                 <div class="mt-4 pt-3 border-t border-borderline/70 flex justify-between text-[11px] font-mono text-neutral-500">
                   <span class="text-neutral-300 truncate max-w-[180px]">${art.source}</span>
@@ -606,7 +598,7 @@
                     <span class="text-[10px] font-mono text-neutral-400 px-1.5 py-0.5 bg-obsidian border border-borderline rounded">${((art.importance_score||88)/10).toFixed(1)}</span>
                   </div>
                   <h3 class="font-serif text-lg font-semibold text-neutral-100 mb-2 leading-snug">${t.headline}</h3>
-                  <p class="text-xs text-neutral-400 line-clamp-3">${t.takeaways[0] || t.summary}</p>
+                  <p class="text-xs text-neutral-400 line-clamp-3">${(t.takeaways && t.takeaways[0]) || t.summary || ''}</p>
                 </div>
                 <div class="pt-3 mt-3 border-t border-borderline/60 flex justify-between text-[11px] font-mono text-neutral-500">
                   <span>BRİFİNGİ OKU</span>
@@ -661,17 +653,17 @@
 
         document.querySelectorAll('[data-reader-lang]').forEach(btn => {
           btn.className = btn.getAttribute('data-reader-lang') === lang
-            ? 'px-2.5 py-1 rounded text-xs font-mono font-bold bg-gold text-obsidian'
-            : 'px-2.5 py-1 rounded text-xs font-mono text-neutral-400';
+            ? 'px-3 py-1 rounded text-xs font-mono font-bold bg-gold text-obsidian'
+            : 'px-3 py-1 rounded text-xs font-mono text-neutral-400';
         });
 
-        document.getElementById('readerCategoryBadge').textContent = art.category.toUpperCase();
-        document.getElementById('readerSourceBadge').textContent = art.source;
+        document.getElementById('readerCategoryBadge').textContent = (art.category || '').toUpperCase();
+        document.getElementById('readerSourceBadge').textContent = art.source || '';
         document.getElementById('readerHeadline').textContent = t.headline;
         document.getElementById('readerTakeawaysHeading').textContent = ui.takeaways;
         document.getElementById('readerActiveLangTag').textContent = ui.edition;
         document.getElementById('readerSummaryHeading').textContent = ui.summary;
-        document.getElementById('readerFooterSource').textContent = art.source;
+        document.getElementById('readerFooterSource').textContent = art.source || '';
 
         const tList = document.getElementById('readerTakeawaysList');
         tList.innerHTML = (t.takeaways || []).map(b => `
@@ -719,8 +711,8 @@
       }
 
       cycleGlobalLanguage() {
-        const langs = ['TR', 'EN', 'FR', 'RU'];
-        this.setGlobalLanguage(langs[(langs.indexOf(this.globalLanguage) + 1) % langs.length]);
+        const nextLang = this.globalLanguage === 'TR' ? 'EN' : 'TR';
+        this.setGlobalLanguage(nextLang);
       }
 
       syncGlobalLanguageUI() {
@@ -756,8 +748,7 @@
         if (this.speechSynth.speaking) { this.stopSpeech(); return; }
         const t = this.getTranslation(this.activeArticle, this.readerLanguage);
         const utt = new SpeechSynthesisUtterance(`${t.headline}. ${(t.takeaways||[]).join('. ')}. ${t.summary}`);
-        const map = { TR: 'tr-TR', EN: 'en-US', FR: 'fr-FR', RU: 'ru-RU' };
-        utt.lang = map[this.readerLanguage] || 'tr-TR';
+        utt.lang = this.readerLanguage === 'EN' ? 'en-US' : 'tr-TR';
         document.getElementById('readerTtsBtn').className = 'p-2 rounded-lg bg-gold text-obsidian border border-gold';
         utt.onend = () => this.stopSpeech();
         this.speechSynth.speak(utt);
