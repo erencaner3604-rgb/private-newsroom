@@ -14,7 +14,6 @@
     :root {
       --bg-primary: #0a0b0d;
       --bg-card: #121418;
-      --bg-card-hover: #171a20;
       --border-subtle: rgba(255, 255, 255, 0.08);
       --border-gold: rgba(212, 175, 55, 0.35);
       --gold-primary: #d4af37;
@@ -50,15 +49,8 @@
       padding: 14px 20px 10px;
     }
 
-    .top-bar {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      margin-bottom: 14px;
-    }
-
+    .top-bar { display: flex; justify-content: space-between; align-items: center; margin-bottom: 14px; }
     .brand-group { display: flex; align-items: center; gap: 12px; }
-
     .brand-badge {
       background: linear-gradient(135deg, #1c1f26, #0e1013);
       border: 1px solid var(--border-gold);
@@ -68,304 +60,50 @@
       font-size: 13px;
       padding: 4px 8px;
       border-radius: var(--radius-sm);
-      letter-spacing: 1px;
     }
-
-    .title-area h1 {
-      font-family: 'Cinzel', serif;
-      font-size: 15px;
-      font-weight: 700;
-      letter-spacing: 1.5px;
-      text-transform: uppercase;
-      color: #fff;
-    }
-
-    .title-area p {
-      font-size: 10px;
-      color: var(--text-muted);
-      letter-spacing: 0.5px;
-      text-transform: uppercase;
-    }
-
+    .title-area h1 { font-family: 'Cinzel', serif; font-size: 15px; color: #fff; text-transform: uppercase; }
+    .title-area p { font-size: 10px; color: var(--text-muted); text-transform: uppercase; }
+    
     .header-actions { display: flex; align-items: center; gap: 8px; }
+    .lang-btn { background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-main); font-size: 11px; padding: 5px 9px; border-radius: var(--radius-sm); cursor: pointer; display: flex; gap: 4px;}
 
-    .pulse-badge {
-      display: flex;
-      align-items: center;
-      gap: 5px;
-      background: rgba(16, 185, 129, 0.1);
-      border: 1px solid rgba(16, 185, 129, 0.3);
-      color: var(--accent-green);
-      font-size: 10px;
-      font-weight: 600;
-      padding: 4px 8px;
-      border-radius: 20px;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-    }
-
-    .pulse-dot {
-      width: 6px;
-      height: 6px;
-      background: var(--accent-green);
-      border-radius: 50%;
-      box-shadow: 0 0 8px var(--accent-green);
-      animation: pulse 1.8s infinite;
-    }
-
-    @keyframes pulse {
-      0% { transform: scale(0.9); opacity: 0.7; }
-      50% { transform: scale(1.3); opacity: 1; }
-      100% { transform: scale(0.9); opacity: 0.7; }
-    }
-
-    .lang-btn {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-main);
-      font-size: 11px;
-      font-weight: 600;
-      padding: 5px 9px;
-      border-radius: var(--radius-sm);
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .category-scroll {
-      display: flex;
-      gap: 8px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 4px;
-    }
+    .category-scroll { display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; padding-bottom: 4px; }
     .category-scroll::-webkit-scrollbar { display: none; }
-
-    .cat-pill {
-      white-space: nowrap;
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      color: var(--text-muted);
-      font-size: 12px;
-      font-weight: 500;
-      padding: 7px 14px;
-      border-radius: 30px;
-      cursor: pointer;
-      transition: var(--transition);
-      display: flex;
-      align-items: center;
-      gap: 6px;
-    }
-
-    .cat-pill.active {
-      background: var(--gold-primary);
-      color: #000;
-      font-weight: 700;
-      border-color: var(--gold-primary);
-    }
+    .cat-pill { white-space: nowrap; background: var(--bg-card); border: 1px solid var(--border-subtle); color: var(--text-muted); font-size: 12px; padding: 7px 14px; border-radius: 30px; display: flex; align-items: center; gap: 6px; }
+    .cat-pill.active { background: var(--gold-primary); color: #000; font-weight: 700; border-color: var(--gold-primary); }
 
     main { padding: 16px 20px; max-width: 720px; margin: 0 auto; }
+    .section-header { margin-bottom: 12px; }
+    .section-sub { font-size: 10px; font-weight: 700; color: var(--gold-primary); margin-bottom: 4px; letter-spacing: 1px;}
+    .section-title { font-family: 'Cinzel', serif; font-size: 17px; color: #fff; }
 
-    .search-box { position: relative; margin-bottom: 20px; }
+    .vip-carousel { display: flex; gap: 14px; overflow-x: auto; scrollbar-width: none; margin-bottom: 24px; scroll-snap-type: x mandatory; }
+    .vip-card { min-width: 85%; scroll-snap-align: start; background: linear-gradient(145deg, #16181e, #101216); border: 1px solid var(--border-gold); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 10px; }
 
-    .search-box input {
-      width: 100%;
-      background: #121418;
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 12px 14px 12px 42px;
-      color: #fff;
-      font-size: 13px;
-      outline: none;
-      transition: var(--transition);
-    }
-
-    .search-box input:focus { border-color: var(--gold-primary); }
-
-    .search-box .material-symbols-outlined {
-      position: absolute;
-      left: 14px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: var(--text-dim);
-      font-size: 18px;
-    }
-
-    .section-header {
-      margin-bottom: 12px;
-      display: flex;
-      justify-content: space-between;
-      align-items: flex-end;
-    }
-
-    .section-sub {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 1.2px;
-      text-transform: uppercase;
-      color: var(--gold-primary);
-      margin-bottom: 4px;
-    }
-
-    .section-title {
-      font-family: 'Cinzel', serif;
-      font-size: 17px;
-      font-weight: 700;
-      color: #fff;
-    }
-
-    .vip-carousel {
-      display: flex;
-      gap: 14px;
-      overflow-x: auto;
-      scrollbar-width: none;
-      padding-bottom: 8px;
-      margin-bottom: 24px;
-      scroll-snap-type: x mandatory;
-    }
-    .vip-carousel::-webkit-scrollbar { display: none; }
-
-    .vip-card {
-      min-width: 85%;
-      scroll-snap-align: start;
-      background: linear-gradient(145deg, #16181e, #101216);
-      border: 1px solid var(--border-gold);
-      border-radius: var(--radius-md);
-      padding: 16px;
-      display: flex;
-      flex-direction: column;
-      gap: 10px;
-    }
-
-    .articles-feed { display: flex; flex-direction: column; gap: 14px; }
-
-    .article-card {
-      background: var(--bg-card);
-      border: 1px solid var(--border-subtle);
-      border-radius: var(--radius-md);
-      padding: 18px 18px 14px;
-      transition: var(--transition);
-      display: flex;
-      flex-direction: column;
-      gap: 12px;
-    }
+    .articles-feed { display: flex; flex-direction: column; gap: 16px; }
+    .article-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: var(--radius-md); padding: 16px; display: flex; flex-direction: column; gap: 12px; }
+    
+    /* GÖRSEL ALANI İÇİN YENİ CSS */
+    .article-image { width: 100%; height: 160px; object-fit: cover; border-radius: var(--radius-sm); margin-bottom: 4px; border: 1px solid rgba(255,255,255,0.05); filter: brightness(0.85); transition: var(--transition); }
+    .article-image:hover { filter: brightness(1); }
 
     .card-top { display: flex; justify-content: space-between; align-items: center; }
-
-    .meta-source { display: flex; align-items: center; gap: 8px; }
-
-    .cat-tag {
-      font-size: 10px;
-      font-weight: 700;
-      letter-spacing: 0.8px;
-      text-transform: uppercase;
-      color: var(--gold-primary);
-    }
-
+    .cat-tag { font-size: 10px; font-weight: 700; color: var(--gold-primary); text-transform: uppercase; }
     .source-name { font-size: 11px; color: var(--text-dim); }
+    .score-badge { font-family: 'Cinzel', serif; font-size: 11px; font-weight: 700; color: var(--gold-light); background: rgba(212, 175, 55, 0.12); border: 1px solid var(--border-gold); padding: 2px 7px; border-radius: var(--radius-sm); }
 
-    .score-badge {
-      font-family: 'Cinzel', serif;
-      font-size: 11px;
-      font-weight: 700;
-      color: var(--gold-light);
-      background: rgba(212, 175, 55, 0.12);
-      border: 1px solid var(--border-gold);
-      padding: 2px 7px;
-      border-radius: var(--radius-sm);
-    }
-
-    .headline {
-      font-family: 'Playfair Display', serif;
-      font-size: 16px;
-      font-weight: 600;
-      line-height: 1.4;
-      color: #fff;
-    }
-
-    .takeaways-box {
-      background: rgba(0, 0, 0, 0.25);
-      border-left: 2px solid var(--gold-primary);
-      padding: 8px 12px;
-      border-radius: 0 var(--radius-sm) var(--radius-sm) 0;
-    }
-
+    .headline { font-family: 'Playfair Display', serif; font-size: 16px; font-weight: 600; color: #fff; line-height: 1.4; }
+    .takeaways-box { background: rgba(0, 0, 0, 0.25); border-left: 2px solid var(--gold-primary); padding: 8px 12px; border-radius: 0 var(--radius-sm) var(--radius-sm) 0; }
     .takeaways-box ul { list-style: none; display: flex; flex-direction: column; gap: 5px; }
-
-    .takeaways-box li {
-      font-size: 12px;
-      color: #cfd4dc;
-      display: flex;
-      align-items: flex-start;
-      gap: 6px;
-      line-height: 1.4;
-    }
+    .takeaways-box li { font-size: 12px; color: #cfd4dc; display: flex; gap: 6px; }
     .takeaways-box li::before { content: "•"; color: var(--gold-primary); font-weight: bold; }
-
-    .summary-text {
-      font-size: 13px;
-      color: var(--text-muted);
-      line-height: 1.55;
-      display: none;
-      white-space: pre-line;
-      border-top: 1px dashed var(--border-subtle);
-      padding-top: 10px;
-      margin-top: 4px;
-    }
+    .summary-text { font-size: 13px; color: var(--text-muted); display: none; white-space: pre-line; border-top: 1px dashed var(--border-subtle); padding-top: 10px; margin-top: 4px; }
     .summary-text.expanded { display: block; }
+    .card-footer { display: flex; justify-content: space-between; align-items: center; padding-top: 6px; }
+    .read-toggle { background: none; border: none; color: var(--gold-light); font-size: 11px; font-weight: 600; cursor: pointer; display: flex; align-items: center; gap: 4px; }
 
-    .card-footer {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding-top: 6px;
-      font-size: 11px;
-    }
-
-    .read-toggle {
-      background: none;
-      border: none;
-      color: var(--gold-light);
-      font-size: 11px;
-      font-weight: 600;
-      cursor: pointer;
-      display: flex;
-      align-items: center;
-      gap: 4px;
-    }
-
-    .time-text { color: var(--text-dim); }
-
-    nav.bottom-bar {
-      position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      height: 64px;
-      background: rgba(10, 11, 13, 0.94);
-      backdrop-filter: blur(16px);
-      -webkit-backdrop-filter: blur(16px);
-      border-top: 1px solid var(--border-subtle);
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      z-index: 100;
-      max-width: 720px;
-      margin: 0 auto;
-    }
-
-    .nav-item {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      gap: 3px;
-      color: var(--text-dim);
-      font-size: 10px;
-      cursor: pointer;
-      background: none;
-      border: none;
-    }
+    nav.bottom-bar { position: fixed; bottom: 0; left: 0; right: 0; height: 64px; background: rgba(10, 11, 13, 0.94); backdrop-filter: blur(16px); border-top: 1px solid var(--border-subtle); display: flex; justify-content: space-around; align-items: center; z-index: 100; max-width: 720px; margin: 0 auto; }
+    .nav-item { display: flex; flex-direction: column; align-items: center; gap: 3px; color: var(--text-dim); font-size: 10px; background: none; border: none; cursor: pointer; }
     .nav-item.active { color: var(--gold-primary); }
     .nav-item .material-symbols-outlined { font-size: 22px; }
   </style>
@@ -374,83 +112,52 @@
   <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-firestore-compat.js"></script>
 </head>
 <body>
-
   <header>
     <div class="top-bar">
       <div class="brand-group">
         <div class="brand-badge">E&C</div>
         <div class="title-area">
           <h1>Private News Room</h1>
-          <p id="clock-display">Canlı İstihbarat</p>
+          <p>Canlı İstihbarat</p>
         </div>
       </div>
       <div class="header-actions">
-        <div class="pulse-badge"><span class="pulse-dot"></span><span>Canlı Akış</span></div>
         <button class="lang-btn" id="lang-btn">
           <span class="material-symbols-outlined" style="font-size:14px;">translate</span>
           <span id="lang-label">TR</span>
         </button>
       </div>
     </div>
-
-    <div class="category-scroll" id="cat-scroll">
-      <button class="cat-pill active" data-category="all">Tümü</button>
-      <button class="cat-pill" data-category="vip_10"><span class="material-symbols-outlined" style="font-size:14px;">bolt</span> VIP 10</button>
-      <button class="cat-pill" data-category="breaking_world">Küresel Manşetler</button>
-      <button class="cat-pill" data-category="economy_finance">Ekonomi & Finans</button>
-      <button class="cat-pill" data-category="luxury_horology">Lüks & Saatçilik</button>
-      <button class="cat-pill" data-category="real_estate_market">Gayrimenkul</button>
-      <button class="cat-pill" data-category="ai_vc_tech">Yapay Zeka & VC</button>
-      <button class="cat-pill" data-category="trade_logistics">Dış Ticaret & Lojistik</button>
-      <button class="cat-pill" data-category="aegean_radar">İzmir & Bodrum</button>
+    <div class="category-scroll">
+      <button class="cat-pill active" onclick="filterCategory('all')">Tümü</button>
+      <button class="cat-pill" onclick="filterCategory('vip_10')">VIP 10</button>
+      <button class="cat-pill" onclick="filterCategory('breaking_world')">Küresel Manşetler</button>
+      <button class="cat-pill" onclick="filterCategory('economy_finance')">Ekonomi</button>
+      <button class="cat-pill" onclick="filterCategory('luxury_horology')">Lüks & Saat</button>
+      <button class="cat-pill" onclick="filterCategory('ai_vc_tech')">Yapay Zeka</button>
+      <button class="cat-pill" onclick="filterCategory('aegean_radar')">Ege Radar</button>
     </div>
   </header>
 
   <main>
-    <div class="search-box">
-      <span class="material-symbols-outlined">search</span>
-      <input type="text" id="search-input" placeholder="Haberlerde veya analizlerde ara...">
-    </div>
-
     <section id="vip-section">
       <div class="section-header">
-        <div>
-          <div class="section-sub">VIP KÜRASYON • TOP 10 • STRATEJİK RAPOR</div>
-          <h2 class="section-title">Günün En Kritik 10 Haberi</h2>
-        </div>
+        <div class="section-sub">GÜNÜN EN KRİTİK HABERLERİ</div>
       </div>
       <div class="vip-carousel" id="vip-carousel"></div>
     </section>
 
     <div class="section-header">
-      <div>
-        <div class="section-sub">YÖNETİCİ İSTİHBARAT AKIŞI</div>
-      </div>
+      <div class="section-sub">YÖNETİCİ İSTİHBARAT AKIŞI</div>
     </div>
     <div class="articles-feed" id="articles-container"></div>
   </main>
 
   <nav class="bottom-bar">
-    <button class="nav-item active" onclick="filterByNav('all')">
-      <span class="material-symbols-outlined">feed</span>
-      <span>Akış</span>
-    </button>
-    <button class="nav-item" onclick="filterByNav('vip_10')">
-      <span class="material-symbols-outlined">bolt</span>
-      <span>VIP 10</span>
-    </button>
-    <button class="nav-item" onclick="filterByNav('economy_finance')">
-      <span class="material-symbols-outlined">payments</span>
-      <span>Piyasalar</span>
-    </button>
-    <button class="nav-item" onclick="filterByNav('luxury_horology')">
-      <span class="material-symbols-outlined">watch</span>
-      <span>Lüks & Saat</span>
-    </button>
-    <button class="nav-item" onclick="filterByNav('aegean_radar')">
-      <span class="material-symbols-outlined">explore</span>
-      <span>Ege Radar</span>
-    </button>
+    <button class="nav-item active" onclick="filterCategory('all')"><span class="material-symbols-outlined">feed</span><span>Akış</span></button>
+    <button class="nav-item" onclick="filterCategory('economy_finance')"><span class="material-symbols-outlined">payments</span><span>Piyasalar</span></button>
+    <button class="nav-item" onclick="filterCategory('luxury_horology')"><span class="material-symbols-outlined">watch</span><span>Lüks & Saat</span></button>
+    <button class="nav-item" onclick="filterCategory('aegean_radar')"><span class="material-symbols-outlined">explore</span><span>Ege Radar</span></button>
   </nav>
 
   <script>
@@ -458,37 +165,13 @@
       apiKey: "AIzaSyCP8D0OH5AKFQdwYC_nntCEA1Gf8yYzY84",
       authDomain: "news-c0d54.firebaseapp.com",
       projectId: "news-c0d54",
-      storageBucket: "news-c0d54.firebasestorage.app",
-      messagingSenderId: "142483105638",
-      appId: "1:142483105638:web:4cff78bab27c0e08ad8aa7",
-      measurementId: "G-X73X2VJ448"
     };
-
     firebase.initializeApp(firebaseConfig);
     const db = firebase.firestore();
 
-    const CATEGORY_MAP = {
-      breaking_world: { TR: "Küresel Manşetler", EN: "Breaking World" },
-      economy_finance: { TR: "Ekonomi & Finans", EN: "Economy & Finance" },
-      luxury_horology: { TR: "Lüks & Saatçilik", EN: "Luxury & Horology" },
-      real_estate_market: { TR: "Gayrimenkul Piyasası", EN: "Real Estate Market" },
-      ai_vc_tech: { TR: "Yapay Zeka & VC", EN: "AI & Tech VC" },
-      trade_logistics: { TR: "Dış Ticaret & Lojistik", EN: "Trade & Logistics" },
-      aegean_radar: { TR: "İzmir & Bodrum Radarı", EN: "Aegean Radar" }
-    };
-
     let currentLang = "TR";
     let activeCategory = "all";
-    let searchQuery = "";
     let allArticles = [];
-
-    function updateClock() {
-      const now = new Date();
-      const options = { day: 'numeric', month: 'short', hour: '2-digit', minute: '2-digit' };
-      document.getElementById('clock-display').innerText = now.toLocaleDateString('tr-TR', options) + " • E&C";
-    }
-    setInterval(updateClock, 1000);
-    updateClock();
 
     document.getElementById('lang-btn').addEventListener('click', () => {
       currentLang = currentLang === "TR" ? "EN" : "TR";
@@ -496,184 +179,57 @@
       renderAll();
     });
 
-    document.getElementById('search-input').addEventListener('input', (e) => {
-      searchQuery = e.target.value.toLowerCase().trim();
-      renderAll();
-    });
-
-    document.querySelectorAll('.cat-pill').forEach(btn => {
-      btn.addEventListener('click', () => {
-        document.querySelectorAll('.cat-pill').forEach(b => b.classList.remove('active'));
-        btn.classList.add('active');
-        activeCategory = btn.getAttribute('data-category');
-        renderAll();
-      });
-    });
-
-    function filterByNav(cat) {
+    function filterCategory(cat) {
       activeCategory = cat;
-      document.querySelectorAll('.cat-pill').forEach(b => {
-        b.classList.toggle('active', b.getAttribute('data-category') === cat);
-      });
-      document.querySelectorAll('.nav-item').forEach(b => {
-        b.classList.toggle('active', b.getAttribute('onclick')?.includes(`'${cat}'`));
-      });
+      document.querySelectorAll('.cat-pill, .nav-item').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll(`[onclick="filterCategory('${cat}')"]`).forEach(b => b.classList.add('active'));
       renderAll();
     }
 
-    function getDisplayScore(item) {
-      if (item.importance_score && item.importance_score !== 90) {
-        return (item.importance_score / 10).toFixed(1);
-      }
-      let hash = 0;
-      const str = item.original_title || "score";
-      for (let i = 0; i < str.length; i++) hash = str.charCodeAt(i) + ((hash << 5) - hash);
-      const variance = (Math.abs(hash) % 12) / 10;
-      return (8.6 + variance).toFixed(1);
-    }
-
-    // İndeks takılması olmadan tüm haberleri doğrudan canlı dinler
     db.collection("articles").onSnapshot(snapshot => {
       allArticles = [];
-      snapshot.forEach(doc => {
-        allArticles.push({ id: doc.id, ...doc.data() });
-      });
-      // En yeniden en eskiye sırala
+      snapshot.forEach(doc => allArticles.push({ id: doc.id, ...doc.data() }));
       allArticles.sort((a, b) => new Date(b.published_at || 0) - new Date(a.published_at || 0));
       renderAll();
-    }, err => {
-      console.error("Firestore okuma hatası:", err);
     });
 
     function renderAll() {
-      renderVipCarousel();
-      renderArticlesFeed();
-    }
-
-    function renderVipCarousel() {
-      const carousel = document.getElementById('vip-carousel');
-      const vipSection = document.getElementById('vip-section');
-
-      if (allArticles.length === 0) {
-        vipSection.style.display = 'none';
-        return;
-      }
-      vipSection.style.display = 'block';
-
-      const vipList = [...allArticles]
-        .sort((a, b) => parseFloat(getDisplayScore(b)) - parseFloat(getDisplayScore(a)))
-        .slice(0, 10);
-
-      carousel.innerHTML = vipList.map((item, idx) => {
-        const trans = (item.translations && item.translations[currentLang]) || item.translations?.TR || {};
-        const headline = trans.headline || item.original_title;
-        const catLabel = (CATEGORY_MAP[item.category] && CATEGORY_MAP[item.category][currentLang]) || item.category;
-        const score = getDisplayScore(item);
-
-        return `
-          <div class="vip-card" onclick="document.getElementById('${item.id}')?.scrollIntoView({behavior: 'smooth'})">
-            <div class="card-top">
-              <span class="brand-badge">#${idx + 1} VIP</span>
-              <span class="score-badge">ETKİ ${score}</span>
-            </div>
-            <h3 class="headline" style="font-size:14px;">${headline}</h3>
-            <div class="card-footer" style="padding:0;">
-              <span class="cat-tag">${catLabel}</span>
-              <span style="color:var(--gold-primary); font-size:11px; font-weight:600;">GÖSTER →</span>
-            </div>
-          </div>
-        `;
-      }).join('');
-    }
-
-    function renderArticlesFeed() {
-      const container = document.getElementById('articles-container');
+      const vipCont = document.getElementById('vip-carousel');
+      const feedCont = document.getElementById('articles-container');
       
-      let filtered = allArticles;
-
-      if (activeCategory === 'vip_10') {
-        filtered = [...allArticles]
-          .sort((a, b) => parseFloat(getDisplayScore(b)) - parseFloat(getDisplayScore(a)))
-          .slice(0, 10);
-      } else if (activeCategory !== 'all') {
-        filtered = filtered.filter(a => a.category === activeCategory);
-      }
-
-      if (searchQuery) {
-        filtered = filtered.filter(a => {
-          const trans = (a.translations && a.translations[currentLang]) || a.translations?.TR || {};
-          const text = (trans.headline + " " + (trans.takeaways || []).join(" ") + " " + a.original_title).toLowerCase();
-          return text.includes(searchQuery);
-        });
-      }
-
-      if (filtered.length === 0) {
-        container.innerHTML = `
-          <div style="text-align:center; padding: 40px 20px; color: var(--text-dim);">
-            <p>Bu kategoride henüz rapor bulunmuyor.</p>
-          </div>`;
-        return;
-      }
-
-      container.innerHTML = filtered.map(item => {
+      let filtered = activeCategory === 'all' ? allArticles : (activeCategory === 'vip_10' ? allArticles : allArticles.filter(a => a.category === activeCategory));
+      
+      const vipList = [...allArticles].sort((a, b) => (b.importance_score || 85) - (a.importance_score || 85)).slice(0, 10);
+      
+      vipCont.innerHTML = vipList.map((item, i) => {
         const trans = (item.translations && item.translations[currentLang]) || item.translations?.TR || {};
-        const headline = trans.headline || item.original_title;
-        const takeaways = trans.takeaways || [];
-        const summary = trans.summary || "";
-        const catLabel = (CATEGORY_MAP[item.category] && CATEGORY_MAP[item.category][currentLang]) || item.category;
-        const score = getDisplayScore(item);
-        const timeStr = item.published_at ? new Date(item.published_at).toLocaleTimeString([], {hour: '2-digit', minute:'2-digit'}) : "";
+        return `
+          <div class="vip-card">
+            <div class="card-top"><span class="cat-tag">#${i+1} VIP</span><span class="score-badge">${(item.importance_score/10).toFixed(1)}</span></div>
+            <h3 class="headline" style="font-size:14px;">${trans.headline || item.original_title}</h3>
+          </div>`;
+      }).join('');
+
+      feedCont.innerHTML = filtered.map(item => {
+        const trans = (item.translations && item.translations[currentLang]) || item.translations?.TR || {};
+        const imgHtml = item.image_url ? `<img src="${item.image_url}" class="article-image" alt="Thumbnail">` : '';
+        const score = item.importance_score ? (item.importance_score/10).toFixed(1) : "8.5";
 
         return `
-          <article class="article-card" id="${item.id}">
+          <article class="article-card">
+            ${imgHtml}
             <div class="card-top">
-              <div class="meta-source">
-                <span class="cat-tag">${catLabel}</span>
-                <span style="color:var(--border-subtle)">•</span>
-                <span class="source-name">${item.source || "Global Radar"}</span>
-              </div>
+              <div><span class="cat-tag">${item.category.replace('_', ' ')}</span></div>
               <span class="score-badge">${score}</span>
             </div>
-
-            <h2 class="headline">${headline}</h2>
-
-            ${takeaways.length > 0 ? `
-              <div class="takeaways-box">
-                <ul>
-                  ${takeaways.map(t => `<li>${t}</li>`).join('')}
-                </ul>
-              </div>
-            ` : ''}
-
-            <div class="summary-text" id="summary-${item.id}">
-              ${summary}
-            </div>
-
+            <h2 class="headline">${trans.headline || item.original_title}</h2>
+            ${trans.takeaways ? `<div class="takeaways-box"><ul>${trans.takeaways.map(t=>`<li>${t}</li>`).join('')}</ul></div>` : ''}
+            <div class="summary-text" id="sum-${item.id}">${trans.summary || ""}</div>
             <div class="card-footer">
-              <button class="read-toggle" onclick="toggleSummary('${item.id}')">
-                <span id="btn-text-${item.id}">${currentLang === 'TR' ? 'BRİFİNGİ OKU' : 'READ BRIEFING'}</span>
-                <span class="material-symbols-outlined" id="arrow-${item.id}" style="font-size:14px;">arrow_forward</span>
-              </button>
-              <span class="time-text">${timeStr}</span>
+              <button class="read-toggle" onclick="document.getElementById('sum-${item.id}').classList.toggle('expanded')">BRİFİNGİ OKU ➔</button>
             </div>
-          </article>
-        `;
+          </article>`;
       }).join('');
-    }
-
-    function toggleSummary(id) {
-      const el = document.getElementById(`summary-${id}`);
-      const btnText = document.getElementById(`btn-text-${id}`);
-      const arrow = document.getElementById(`arrow-${id}`);
-      const isExp = el.classList.toggle('expanded');
-
-      if (isExp) {
-        btnText.innerText = currentLang === 'TR' ? 'KAPAT' : 'CLOSE';
-        arrow.innerText = 'arrow_upward';
-      } else {
-        btnText.innerText = currentLang === 'TR' ? 'BRİFİNGİ OKU' : 'READ BRIEFING';
-        arrow.innerText = 'arrow_forward';
-      }
     }
   </script>
 </body>
