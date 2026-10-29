@@ -211,5 +211,4 @@ def run_scraper():
     print(f"==========================================")
 
 if __name__ == "__main__":
-    send_telegram_alert(92, "CANLI TEST", "Sistem basariyla yayinda! Link dogrulaniyor 🚀", "test_id")
     run_scraper()
