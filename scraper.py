@@ -1,25 +1,23 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Eren & Caner Private News Room — Autonomous Executive Scraper & AI Curator
+Eren & Caner Private News Room — Fast Executive Scraper
 """
 
 import hashlib
 import json
 import logging
 import os
-import re
 import sys
 import time
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional
+from datetime import datetime, timezone
+from typing import Any, Dict, List
 from urllib.parse import quote_plus
 
 import feedparser
 import firebase_admin
 import google.generativeai as genai
 import requests
-from bs4 import BeautifulSoup
 from firebase_admin import credentials, firestore
 
 logging.basicConfig(
@@ -30,7 +28,6 @@ logging.basicConfig(
 logger = logging.getLogger("ECNewsRoomBot")
 
 GEMINI_MODEL_NAME = "gemini-3.8-flash"
-RETENTION_DAYS = 14
 
 REQUEST_HEADERS = {
     "User-Agent": (
@@ -39,42 +36,26 @@ REQUEST_HEADERS = {
     )
 }
 
-# Doğrudan çalışan garantili Google News RSS motoru
-CATEGORY_TOPICS: Dict[str, List[Dict[str, str]]] = {
-    "economy": [
-        {"name": "Bloomberg & Reuters Makro", "query": "economy OR inflation OR fed OR markets when:1d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-        {"name": "Ekonomim & Dünya", "query": "ekonomi OR borsa OR merkez bankası when:1d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    ],
-    "luxury": [
-        {"name": "Lüks Moda & Maisons", "query": "LVMH OR Kering OR Hermès OR luxury fashion when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-        {"name": "Haute Horlogerie & Saat", "query": "Patek Philippe OR Rolex OR Audemars Piguet OR luxury watches when:3d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    ],
-    "tech": [
-        {"name": "Yapay Zeka & Startups", "query": "Artificial Intelligence OR OpenAI OR startup funding when:1d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-        {"name": "Türkiye Girişimcilik", "query": "girişim OR yatırım turu OR teknoloji when:2d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    ],
-    "realestate": [
-        {"name": "Kentsel Tasarım & Mimarlık", "query": "architecture design OR urban development when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-        {"name": "Türkiye Gayrimenkul", "query": "konut OR gayrimenkul OR kentsel dönüşüm when:2d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    ],
-    "local": [
-        {"name": "İzmir Gelişim & İmar & Yatırım", "query": "İzmir imar OR İzmir proje OR İzmir kentsel dönüşüm when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-        {"name": "Bodrum Turizm & Yatırım", "query": "Bodrum marina OR Bodrum turizm yatırım OR Bodrum imar when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    ],
-    "culture": [
-        {"name": "Kültür & Sanat", "query": "sanat sergi OR bienal OR art market when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-        {"name": "Global Sports Arena", "query": "Champions League OR Formula 1 OR EuroLeague when:1d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    ]
-}
+# Her kategori için en kritik ve hızlı odaklı sorgular (Hızlı yürütme için optimize edildi)
+TARGET_QUERIES = [
+    {"cat": "economy", "source": "Bloomberg & Makro", "q": "economy OR fed OR markets when:1d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "economy", "source": "Ekonomim & Finans", "q": "ekonomi OR borsa OR faiz when:1d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "luxury", "source": "Lüks Moda & Maisons", "q": "LVMH OR Kering OR Hermes luxury when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "luxury", "source": "Saatçilik & Horology", "q": "luxury watches Patek Rolex when:3d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "tech", "source": "AI & Girişim", "q": "Artificial Intelligence startup funding when:1d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "realestate", "source": "Kentsel Tasarım", "q": "architecture urban planning when:2d", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    {"cat": "local", "source": "İzmir Stratejik Radar", "q": "İzmir imar OR İzmir proje OR İzmir kentsel when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "local", "source": "Bodrum Turizm & Yatırım", "q": "Bodrum marina OR Bodrum yatırım OR Bodrum turizm when:3d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    {"cat": "culture", "source": "Kültür & Spor", "q": "sanat bienal OR spor şampiyonlar when:2d", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+]
 
 SYSTEM_INSTRUCTION = """
 You are the Chief Intelligence Editor for Eren and Caner's Private Executive News Terminal.
-Summarize raw news into executive, noise-free, elite briefings.
+Transform news into noise-free executive briefings.
 
-CRITICAL LOCAL FILTER (category == "local"):
-- Discard small car accidents, petty crime, bickering. Only keep urban planning, marina, hospitality investments, real estate, tourism.
+Local news filter: Strictly discard petty crime or minor road accidents. Only keep real estate, luxury, investments, marina, urban planning.
 
-Output strictly valid JSON:
+Return strictly valid JSON:
 {
   "discard": false,
   "importance_score": 90,
@@ -90,7 +71,7 @@ Output strictly valid JSON:
 def init_firestore() -> firestore.Client:
     raw_creds = os.environ.get("FIREBASE_SERVICE_ACCOUNT", "").strip()
     if not raw_creds:
-        raise RuntimeError("Missing FIREBASE_SERVICE_ACCOUNT environment variable.")
+        raise RuntimeError("Missing FIREBASE_SERVICE_ACCOUNT")
     cred_dict = json.loads(raw_creds)
     if not firebase_admin._apps:
         cred = credentials.Certificate(cred_dict)
@@ -100,7 +81,7 @@ def init_firestore() -> firestore.Client:
 def init_gemini() -> genai.GenerativeModel:
     api_key = os.environ.get("GEMINI_API_KEY", "").strip()
     if not api_key:
-        raise RuntimeError("Missing GEMINI_API_KEY environment variable.")
+        raise RuntimeError("Missing GEMINI_API_KEY")
     genai.configure(api_key=api_key)
     return genai.GenerativeModel(
         model_name=GEMINI_MODEL_NAME,
@@ -108,15 +89,15 @@ def init_gemini() -> genai.GenerativeModel:
         generation_config={"temperature": 0.2, "response_mime_type": "application/json"},
     )
 
-def fetch_feed(query_str: str, hl: str, gl: str, ceid: str) -> List[Dict[str, Any]]:
+def fetch_top_entry(query_str: str, hl: str, gl: str, ceid: str) -> List[Dict[str, Any]]:
     url = f"https://news.google.com/rss/search?q={quote_plus(query_str)}&hl={hl}&gl={gl}&ceid={ceid}"
     try:
-        resp = requests.get(url, headers=REQUEST_HEADERS, timeout=12)
+        resp = requests.get(url, headers=REQUEST_HEADERS, timeout=8)
         if resp.status_code == 200:
             parsed = feedparser.parse(resp.content)
-            return parsed.entries[:2]
+            return parsed.entries[:1] # Her kanaldan en sıcak 1 ana haberi alır
     except Exception as e:
-        logger.warning(f"Feed error: {e}")
+        logger.warning(f"Fetch hatası: {e}")
     return []
 
 def compute_article_id(title: str, link: str) -> str:
@@ -124,59 +105,57 @@ def compute_article_id(title: str, link: str) -> str:
     return "art_" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
 
 def main() -> None:
-    logger.info(">>> EC Newsroom Bot Calisiyor...")
+    logger.info(">>> EC Hizli Bot Baslatildi...")
     db = init_firestore()
     model = init_gemini()
     col = db.collection("articles")
 
     total_added = 0
 
-    for cat_id, sources in CATEGORY_TOPICS.items():
-        logger.info(f"--- Kategori taranıyor: {cat_id} ---")
-        for src in sources:
-            entries = fetch_feed(src["query"], src["hl"], src["gl"], src["ceid"])
-            logger.info(f"[{src['name']}] Bulunan haber sayisi: {len(entries)}")
+    for item in TARGET_QUERIES:
+        entries = fetch_top_entry(item["q"], item["hl"], item["gl"], item["ceid"])
+        if not entries:
+            continue
 
-            for entry in entries:
-                title = entry.get("title", "").strip()
-                link = entry.get("link", "")
-                summary = entry.get("summary", "")
+        entry = entries[0]
+        title = entry.get("title", "").strip()
+        link = entry.get("link", "")
+        summary = entry.get("summary", "")
 
-                if not title or len(title) < 10:
-                    continue
+        if not title:
+            continue
 
-                doc_id = compute_article_id(title, link)
-                if col.document(doc_id).get().exists:
-                    logger.info(f"Zaten kayitli: {title[:40]}")
-                    continue
+        doc_id = compute_article_id(title, link)
+        if col.document(doc_id).get().exists:
+            logger.info(f"Atlandi (Zaten var): {title[:35]}")
+            continue
 
-                prompt = f"CATEGORY: {cat_id}\nSOURCE: {src['name']}\nTITLE: {title}\nTEXT: {summary}"
-                try:
-                    res = model.generate_content(prompt)
-                    time.sleep(4.5)
-                    data = json.loads(res.text)
+        prompt = f"CATEGORY: {item['cat']}\nSOURCE: {item['source']}\nTITLE: {title}\nTEXT: {summary}"
+        try:
+            res = model.generate_content(prompt)
+            data = json.loads(res.text)
 
-                    if data.get("discard") is True:
-                        continue
+            if data.get("discard") is True:
+                continue
 
-                    score = int(data.get("importance_score", 85))
-                    doc = {
-                        "category": cat_id,
-                        "source": src["name"],
-                        "original_title": title,
-                        "published_at": datetime.now(timezone.utc).isoformat(),
-                        "importance_score": score,
-                        "is_vip": score >= 88,
-                        "translations": data.get("translations", {})
-                    }
-                    col.document(doc_id).set(doc)
-                    total_added += 1
-                    logger.info(f"+++ FIRESTORE'A EKLENDI: {title[:45]} (Etki: {score})")
-                except Exception as ex:
-                    logger.error(f"Hata olustu: {ex}")
-                    time.sleep(3)
+            score = int(data.get("importance_score", 88))
+            doc = {
+                "category": item["cat"],
+                "source": item["source"],
+                "original_title": title,
+                "published_at": datetime.now(timezone.utc).isoformat(),
+                "importance_score": score,
+                "is_vip": score >= 85,
+                "translations": data.get("translations", {})
+            }
+            col.document(doc_id).set(doc)
+            total_added += 1
+            logger.info(f"+++ FIRESTORE YAZILDI: {title[:40]}")
+            time.sleep(2) # Kotayı zorlamadan hızlı geçiş
+        except Exception as ex:
+            logger.error(f"Hata: {ex}")
 
-    logger.info(f">>> ISLEM TAMAMLANDI. Toplam Eklenen Haber: {total_added}")
+    logger.info(f">>> BOT BITTI. Eklenen yeni brifing: {total_added}")
 
 if __name__ == "__main__":
     main()
