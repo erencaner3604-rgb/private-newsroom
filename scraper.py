@@ -118,7 +118,7 @@ def send_telegram_alert(score, cat, headline, doc_id):
         return
     emoji = "🚨" if score >= 96 else "⚡"
     
-    # Sitenin tam ve doğru GitHub Pages adresi
+    # Doğru kullanıcı adı (erencaner3604-rgb)
     app_url = f"https://erencaner3604-rgb.github.io/private-newsroom/#{doc_id}"
     
     msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Sistemde Oku & Analizi Gör]({app_url})"
@@ -211,4 +211,5 @@ def run_scraper():
     print(f"==========================================")
 
 if __name__ == "__main__":
+    send_telegram_alert(92, "CANLI TEST", "Sistem basariyla yayinda! Link dogrulaniyor 🚀", "test_id")
     run_scraper()
