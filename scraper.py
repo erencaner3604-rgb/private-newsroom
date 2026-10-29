@@ -89,7 +89,7 @@ def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nSummary: {summary_raw}"
     if GEMINI_KEY:
         try:
-            model = genai.GenerativeModel("gemini-1.5-flash")
+            model = genai.GenerativeModel("gemini-3.8-flash")
             response = model.generate_content(
                 f"{SYSTEM_PROMPT}\n\nAnalyze this:\n{content}",
                 generation_config={"response_mime_type": "application/json"}
