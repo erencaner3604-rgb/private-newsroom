@@ -210,5 +210,6 @@ def run_scraper():
     print(f">>> İŞLEM TAMAMLANDI! Toplam Eklenen Yeni Rapor: {added_count}")
     print(f"==========================================")
 
-if __name__ == "__main__":
+    if __name__ == "__main__":
+    send_telegram_alert(92, "CANLI TEST", "Sistem basariyla yayinda! Link dogrulaniyor 🚀", "test_id")
     run_scraper()
