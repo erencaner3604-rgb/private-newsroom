@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 # -*- coding: utf-8 -*-
 """
-Eren & Caner Private News Room — Hibrit İstihbarat Motoru
+Eren & Caner Private News Room — 7 Stratejik İstihbarat Radarı
 Gemini 3.8 Flash (Birincil) + Groq GPT-OSS-120B (Yedek)
 """
 
@@ -41,30 +41,117 @@ REQUEST_HEADERS = {
     )
 }
 
+# 7 STRATEJİK KATEGORİ VE KAPSAMLI SEO RADARI
 FEEDS_CONFIG = [
-    # 1. Piyasalar & Makro
-    {"cat": "economy", "source": "Bloomberg & Markets", "q": "global economy OR inflation OR markets", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "economy", "source": "Ekonomim & Finans", "q": "ekonomi OR borsa OR merkez bankası", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    # 1. KÜRESEL MANŞETLER & EN ÇOK KONUŞULANLAR
+    {
+        "cat": "breaking_world",
+        "source": "Global Breaking & Geopolitics",
+        "q": '("breaking news" OR "developing story" OR "world politics" OR "geopolitical crisis" OR "summit" OR "diplomatic") -sports -celebrity',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "breaking_world",
+        "source": "Türkiye & Bölgesel Sıcak Gündem",
+        "q": '("son dakika" OR "flaş gelişme" OR "jeopolitik" OR "kritik zirve" OR "diplomasi" OR "dış politika") -magazin -dizi',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
 
-    # 2. Lüks Maisons & Saatçilik
-    {"cat": "luxury", "source": "Lüks Maisons & Moda", "q": "LVMH OR Kering OR luxury brand OR fashion", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "luxury", "source": "Haute Horlogerie Radar", "q": "luxury watches OR Rolex OR Patek", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    # 2. MAKRO EKONOMİ, FİNANS & PİYASALAR
+    {
+        "cat": "economy_finance",
+        "source": "Global Macro & Central Banks",
+        "q": '("Federal Reserve" OR "interest rate decision" OR "bond yields" OR "eurobond" OR "inflation dynamics" OR "sovereign debt" OR "carry trade")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "economy_finance",
+        "source": "TCMB, Para Politikası & BIST",
+        "q": '("TCMB" OR "faiz kararı" OR "enflasyon raporu" OR "eurobond ihracı" OR "Borsa İstanbul" OR "kur korumalı" OR "swap piyasası" OR "Hazine ihaleleri")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
 
-    # 3. Girişimcilik & Yapay Zeka
-    {"cat": "tech", "source": "Venture Capital & AI", "q": "artificial intelligence startup OR venture capital", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "tech", "source": "Türkiye Girişim & AI", "q": "yapay zeka OR girişim OR teknoloji yatırımı", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    # 3. LÜKS MAISONS & HAUTE HORLOGERIE
+    {
+        "cat": "luxury_horology",
+        "source": "Luxury Conglomerates & Maisons",
+        "q": '("LVMH" OR "Kering" OR "Richemont" OR "Hermès" OR "Chanel" OR "luxury retail index" OR "luxury market slow down" OR "M&A luxury")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "luxury_horology",
+        "source": "Haute Horlogerie & Timepieces",
+        "q": '("Rolex" OR "Patek Philippe" OR "Audemars Piguet" OR "Vacheron Constantin" OR "A. Lange & Söhne" OR "haute horlogerie" OR "watch auction" OR "WatchCharts")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "luxury_horology",
+        "source": "Lüks Perakende & Koleksiyon TR",
+        "q": '("lüks sektörü" OR "saat koleksiyonu" OR "mücevherat piyasası" OR "lüks tüketim" OR "Sotheby\'s saat" OR "Christie\'s")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
 
-    # 4. Kentsel Tasarım & Gayrimenkul
-    {"cat": "realestate", "source": "Kentsel Tasarım & Mimarlık", "q": "urban planning OR architecture design", "hl": "en-US", "gl": "US", "ceid": "US:en"},
-    {"cat": "realestate", "source": "Gayrimenkul & İmar", "q": "kentsel dönüşüm OR gayrimenkul OR mimari", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    # 4. GAYRİMENKUL PİYASASI & ARAZİ YATIRIMLARI
+    {
+        "cat": "real_estate_market",
+        "source": "Global Real Estate & REITs",
+        "q": '("commercial real estate" OR "prime residential" OR "housing price index" OR "REIT" OR "land development" OR "real estate fund")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "real_estate_market",
+        "source": "Türkiye Konut, Arsa & GYO",
+        "q": '("konut fiyat endeksi" OR "arsa yatırımı" OR "GYO" OR "gayrimenkul değerleme" OR "imar planı" OR "ticari mülk getirisi" OR "arazi geliştirme")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
 
-    # 5. İzmir & Bodrum Radarı
-    {"cat": "local", "source": "İzmir Stratejik Radar", "q": "İzmir büyükşehir OR İzmir ekonomi OR İzmir proje", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    {"cat": "local", "source": "Bodrum & Ege Yatırım", "q": "Bodrum turizm OR Bodrum yatırım OR Ege kıyı", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
+    # 5. YAPAY ZEKA & GİRİŞİM SERMAYESİ (VC)
+    {
+        "cat": "ai_vc_tech",
+        "source": "AI Breakthroughs & Autonomous Tech",
+        "q": '("artificial intelligence" OR "large language models" OR "autonomous agents" OR "OpenAI" OR "Anthropic" OR "semiconductor chips" OR "Nvidia AI")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "ai_vc_tech",
+        "source": "Venture Capital & Dealmaking",
+        "q": '("venture capital" OR "seed round" OR "Series A funding" OR "startup valuation" OR "tech M&A" OR "unicorn exit")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "ai_vc_tech",
+        "source": "Girişim Ekosistemi & Teknoloji TR",
+        "q": '("yapay zeka girişimi" OR "girişim sermayesi" OR "yatırım turu" OR "erken aşama fon" OR "teknopark" OR "scaleup")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
 
-    # 6. Kültür & Spor
-    {"cat": "culture", "source": "Kültür & Sanat", "q": "sergi OR bienal OR çağdaş sanat", "hl": "tr", "gl": "TR", "ceid": "TR:tr"},
-    {"cat": "culture", "source": "Global Sports Arena", "q": "Formula 1 OR EuroLeague OR Champions League", "hl": "en-US", "gl": "US", "ceid": "US:en"},
+    # 6. DIŞ TİCARET & KÜRESEL LOJİSTİK
+    {
+        "cat": "trade_logistics",
+        "source": "Global Trade Routes & Shipping",
+        "q": '("container freight rates" OR "Drewry index" OR "Red Sea shipping" OR "Suez Canal" OR "global supply chain" OR "maritime logistics" OR "trade tariffs")',
+        "hl": "en-US", "gl": "US", "ceid": "US:en"
+    },
+    {
+        "cat": "trade_logistics",
+        "source": "İhracat, Gümrük & Liman Lojistiği",
+        "q": '("dış ticaret dengesi" OR "ihracat rakamları" OR "navlun fiyatları" OR "liman işletmeciliği" OR "gümrük tarifesi" OR "lojistik koridoru" OR "Orta Koridor")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
+
+    # 7. STRATEJİK EGE RADARI: İZMİR & BODRUM
+    {
+        "cat": "aegean_radar",
+        "source": "İzmir Ticaret, Liman & Sanayi",
+        "q": '("İzmir Limanı" OR "Alsancak Limanı" OR "Çandarlı Limanı" OR "Kemalpaşa Lojistik" OR "İzmir serbest bölge" OR "EBSO" OR "İZTO" OR "İzmir sanayi")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
+    {
+        "cat": "aegean_radar",
+        "source": "Bodrum & Ege Kıyı Yatırımları",
+        "q": '("Bodrum Marina" OR "Yalıkavak Marina" OR "Bodrum lüks resort" OR "Bodrum turizm yatırımı" OR "Bodrum gayrimenkul" OR "Muğla kıyı planlama" OR "Ege marinaları")',
+        "hl": "tr", "gl": "TR", "ceid": "TR:tr"
+    },
 ]
 
 SYSTEM_PROMPT = """You are the Senior Executive Intelligence Editor for Eren and Caner's Private News Room.
@@ -73,7 +160,8 @@ Produce elite analytical briefings strictly in valid JSON format.
 RULES:
 1. Output strictly in TR and EN.
 2. Structure: 3-4 key takeaways and a 2-paragraph strategic analysis.
-3. Response MUST be valid JSON matching this schema:
+3. Tone: Institutional, insightful, strategic, no fluff.
+4. Response MUST be valid JSON matching this schema:
 {
   "importance_score": 90,
   "translations": {
@@ -104,7 +192,8 @@ def fetch_feed_entries(query_str: str, hl: str, gl: str, ceid: str) -> List[Dict
         resp = requests.get(url, headers=REQUEST_HEADERS, timeout=8)
         if resp.status_code == 200:
             parsed = feedparser.parse(resp.content)
-            return (parsed.entries or [])[:4]
+            # Her sorgudan en taze 5 haberi çek
+            return (parsed.entries or [])[:5]
     except Exception as e:
         logger.warning(f"Feed okuma hatası: {e}")
     return []
@@ -134,15 +223,15 @@ def compute_article_id(title: str, link: str) -> str:
     return "art_" + hashlib.sha256(normalized.encode("utf-8")).hexdigest()[:20]
 
 def analyze_article(gemini_model, groq_client: Groq, prompt_text: str) -> Dict[str, Any]:
-    # 1. Önce Gemini 3.8 Flash
+    # 1. Öncelik: Gemini 3.8 Flash
     if gemini_model:
         try:
             res = gemini_model.generate_content(prompt_text)
             return json.loads(res.text)
         except Exception as e:
-            logger.warning(f"Gemini yanıt veremedi / kota bitti: {e}. Groq devreye giriyor...")
+            logger.warning(f"Gemini yanıt veremedi / kota: {e}. Groq devreye giriyor...")
 
-    # 2. Gemini kotaya takıldığında Groq (openai/gpt-oss-120b) devreye girer
+    # 2. Yedek: Groq (openai/gpt-oss-120b)
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
@@ -156,12 +245,12 @@ def analyze_article(gemini_model, groq_client: Groq, prompt_text: str) -> Dict[s
             )
             return json.loads(chat.choices[0].message.content)
         except Exception as ex:
-            logger.error(f"Groq da hata verdi: {ex}")
+            logger.error(f"Groq hatası: {ex}")
 
     return {}
 
 def main() -> None:
-    logger.info(">>> E&C Hibrit (Gemini 3.8 Flash + Groq GPT-OSS) Botu Başlatılıyor...")
+    logger.info(">>> E&C 7 Stratejik İstihbarat Radarı Başlatılıyor...")
     db = init_firestore()
     col = db.collection("articles")
 
@@ -186,7 +275,7 @@ def main() -> None:
 
     for feed in FEEDS_CONFIG:
         entries = fetch_feed_entries(feed["q"], feed["hl"], feed["gl"], feed["ceid"])
-        logger.info(f"[{feed['source']}] Bulunan: {len(entries)} haber")
+        logger.info(f"[{feed['source']}] Taranan: {len(entries)} başlık")
 
         for entry in entries:
             title = entry.get("title", "").strip()
@@ -197,6 +286,7 @@ def main() -> None:
                 continue
 
             doc_id = compute_article_id(title, link)
+            # Deduplication: Önceden eklenen haber atlanır
             if col.document(doc_id).get().exists:
                 continue
 
@@ -225,9 +315,9 @@ def main() -> None:
             col.document(doc_id).set(doc)
             total_saved += 1
             logger.info(f"+++ EKLENDI [{feed['cat']}]: {title[:40]}")
-            time.sleep(0.5)
+            time.sleep(0.4)
 
-    logger.info(f">>> İŞLEM TAMAMLANDI. Eklenen Yeni Rapor Sayısı: {total_saved}")
+    logger.info(f">>> ÇEVRİM TAMAMLANDI. Eklenen Yeni Rapor Sayısı: {total_saved}")
 
 if __name__ == "__main__":
     main()
