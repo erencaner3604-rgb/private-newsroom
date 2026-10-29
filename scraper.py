@@ -89,8 +89,11 @@ def analyze_with_ai(title, summary_raw):
     content = f"Title: {title}\nSummary: {summary_raw}"
     if GEMINI_KEY:
         try:
-            model = genai.GenerativeModel("gemini-3.8-flash")
-            response = model.generate_content(f"{SYSTEM_PROMPT}\n\nAnalyze this:\n{content}", generation_config={"response_mime_type": "application/json"})
+            model = genai.GenerativeModel("gemini-1.5-flash")
+            response = model.generate_content(
+                f"{SYSTEM_PROMPT}\n\nAnalyze this:\n{content}",
+                generation_config={"response_mime_type": "application/json"}
+            )
             return json.loads(response.text.strip())
         except Exception as e:
             print(f"Gemini hatası, Groq'a geçiliyor: {e}")
@@ -98,7 +101,7 @@ def analyze_with_ai(title, summary_raw):
     if groq_client:
         try:
             chat = groq_client.chat.completions.create(
-                model="openai/gpt-oss-120b",
+                model="llama-3.3-70b-versatile",
                 messages=[{"role": "system", "content": SYSTEM_PROMPT}, {"role": "user", "content": content}],
                 response_format={"type": "json_object"}
             )
@@ -108,7 +111,8 @@ def analyze_with_ai(title, summary_raw):
     return None
 
 def send_telegram_alert(score, cat, headline, url):
-    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID: return
+    if not TELEGRAM_TOKEN or not TELEGRAM_CHAT_ID:
+        return
     emoji = "🚨" if score >= 96 else "⚡"
     msg = f"{emoji} *VIP İSTİHBARAT [ETKİ: {score}]*\n\n*Kategori:* {cat}\n*Başlık:* {headline}\n\n[Brifingi Oku & Detaylar]({url})"
     api_url = f"https://api.telegram.org/bot{TELEGRAM_TOKEN}/sendMessage"
@@ -124,7 +128,7 @@ def run_scraper():
     print(">>> PRIVATE NEWS ROOM: HABER MOTORU ÇALIŞTIRILIYOR...")
     articles_col = db.collection("articles")
     
-    # 1. ÖZELLİK: 3 GÜNDEN ESKİ HABERLERİ SİLME (Veritabanı Şişmesini Önler)
+    # 1. ÖZELLİK: 3 GÜNDEN ESKİ HABERLERİ SİLME
     print(">>> 3 GÜNDEN ESKİ HABERLER TEMİZLENİYOR...")
     three_days_ago = datetime.now(timezone.utc) - timedelta(days=3)
     docs = articles_col.stream()
@@ -137,7 +141,8 @@ def run_scraper():
                 if datetime.fromisoformat(pub_str) < three_days_ago:
                     d.reference.delete()
                     del_count += 1
-            except: pass
+            except:
+                pass
     print(f">>> {del_count} ESKİ HABER SİLİNDİ.")
 
     added_count = 0
@@ -167,7 +172,8 @@ def run_scraper():
             image_url = img_tag['src'] if img_tag and img_tag.has_attr('src') else ""
 
             ai_data = analyze_with_ai(raw_title, clean_summary)
-            if not ai_data: continue
+            if not ai_data:
+                continue
 
             score = ai_data.get("importance_score", 85)
             translations = ai_data.get("translations", {})
